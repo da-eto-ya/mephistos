@@ -1,0 +1,9 @@
+{
+  "name": "mephistos",
+  "description": "Abstract ordering system (simple experiments with plain old PHP and OpenShift)",
+  "version": "0.1.0",
+  "license": "MIT",
+  "repository": "da-eto-ya/mephistos",
+  "devDependencies": {
+  }
+}

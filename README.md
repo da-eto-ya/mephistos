@@ -1,3 +1,3 @@
 # Mephistos
 
-Abstract ordering system (simple experiments with plain old PHP and OpenShift)
+Abstract ordering system (simple experiments with plain old PHP, npm and OpenShift)
