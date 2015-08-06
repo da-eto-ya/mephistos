@@ -14,29 +14,37 @@ var gulp = require('gulp'),
     del = require('del');
 
 // компилируем sass
-gulp.task('styles', function() {
-    return sass('app/sass/main.scss', { style: 'expanded' })
+gulp.task('styles', function () {
+    return sass('app/static/sass/main.scss', {style: 'expanded'})
         .pipe(autoprefixer('> 5%'))
-        .pipe(gulp.dest('web/css'))
+        .pipe(gulp.dest('web/static/css'))
         .pipe(rename({suffix: '.min'}))
         .pipe(minifycss())
-        .pipe(gulp.dest('web/css'))
-        .pipe(notify({ message: 'Styles task complete' }));
+        .pipe(gulp.dest('web/static/css'))
+        .pipe(notify({message: 'Styles task complete'}));
 });
 
 // компилируем js
-gulp.task('scripts', function() {
+gulp.task('scripts', function () {
     return gulp.src([
-        'app/js/some/**/*.js',
-        'app/js/other.js',
-        'app/js/main.js'
+        'app/static/js/some/**/*.js',
+        'app/static/js/other.js',
+        'app/static/js/main.js'
     ])
         .pipe(jshint())
         .pipe(jshint.reporter('default'))
         .pipe(concat('main.js'))
-        .pipe(gulp.dest('web/js'))
+        .pipe(gulp.dest('web/static/js'))
         .pipe(rename({suffix: '.min'}))
         .pipe(uglify())
-        .pipe(gulp.dest('web/js'))
-        .pipe(notify({ message: 'Scripts task complete' }));
+        .pipe(gulp.dest('web/static/js'))
+        .pipe(notify({message: 'Scripts task complete'}));
+});
+
+// минифицируем используемые изображения
+gulp.task('images', function () {
+    return gulp.src('app/static/img/**/*')
+        .pipe(cache(imagemin({optimizationLevel: 5, progressive: true, interlaced: true})))
+        .pipe(gulp.dest('web/static/img'))
+        .pipe(notify({message: 'Images task complete'}));
 });
