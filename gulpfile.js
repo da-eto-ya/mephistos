@@ -23,3 +23,20 @@ gulp.task('styles', function() {
         .pipe(gulp.dest('web/css'))
         .pipe(notify({ message: 'Styles task complete' }));
 });
+
+// компилируем js
+gulp.task('scripts', function() {
+    return gulp.src([
+        'app/js/some/**/*.js',
+        'app/js/other.js',
+        'app/js/main.js'
+    ])
+        .pipe(jshint())
+        .pipe(jshint.reporter('default'))
+        .pipe(concat('main.js'))
+        .pipe(gulp.dest('web/js'))
+        .pipe(rename({suffix: '.min'}))
+        .pipe(uglify())
+        .pipe(gulp.dest('web/js'))
+        .pipe(notify({ message: 'Scripts task complete' }));
+});
