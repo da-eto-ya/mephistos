@@ -1,3 +1,6 @@
-/.idea/
+# gulp, npm, other tools
 /node_modules/
 /.sass-cache/
+
+# IDE, editors
+/.idea/
