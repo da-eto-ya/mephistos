@@ -19,4 +19,10 @@ var getLatency = function () {
     return 22;
 };
 
-console.log('destination: ' + calculateDestination(getLatency()));
+(function($){
+    $(function(){
+
+        $('.button-collapse').sideNav();
+
+    });
+})(jQuery);

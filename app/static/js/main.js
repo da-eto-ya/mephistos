@@ -1,1 +1,7 @@
-console.log('destination: ' + calculateDestination(getLatency()));
+(function($){
+    $(function(){
+
+        $('.button-collapse').sideNav();
+
+    });
+})(jQuery);

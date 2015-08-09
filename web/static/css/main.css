@@ -1,7 +1,18 @@
-body {
-  margin: 0 auto;
+.material-icons {
+  font-size: inherit;
+  line-height: inherit;
 }
 
-.img-bg {
-  background: #ee9871;
+.contacts .material-icons {
+  line-height: 1.0;
+  font-size: 0.9rem;
+  width: 0.9rem;
+  margin: 0.1rem 0.1rem 0 0;
+}
+
+.brand-logo {
+  line-height: 1.0;
+}
+.brand-logo img {
+  padding-top: 6px;
 }
