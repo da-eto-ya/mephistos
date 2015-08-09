@@ -45,9 +45,7 @@ gulp.task('styles', function () {
 // компилируем js
 gulp.task('scripts', function () {
     return gulp.src([
-        conf.paths.src + 'js/some/**/*.js',
-        conf.paths.src + 'js/other.js',
-        conf.paths.src + 'js/main.js'
+        conf.paths.src + 'js/*.js'
     ])
         .pipe(jshint())
         .pipe(jshint.reporter('default'))

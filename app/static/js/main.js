@@ -1,7 +1,6 @@
-(function($){
-    $(function(){
-
+(function ($) {
+    // navigation
+    $(function () {
         $('.button-collapse').sideNav();
-
     });
 })(jQuery);
