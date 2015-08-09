@@ -23,6 +23,12 @@ main {
   line-height: inherit;
 }
 
+.promo-block i {
+  margin: 0 0 1rem 0;
+  font-size: 7rem;
+  display: block;
+}
+
 .contacts .material-icons {
   line-height: 1.0;
   font-size: 0.9rem;
