@@ -58,3 +58,18 @@ form.login-form label:after {
 form.order-form label:after {
   width: 20rem;
 }
+
+ul.order-list .collection-item.avatar {
+  padding: 10px 69px 10px 78px;
+}
+ul.order-list .collection-item.avatar .circle {
+  width: 48px;
+  height: 48px;
+}
+
+.nav-avatar {
+  height: 48px;
+  width: auto;
+  display: block;
+  margin: 8px;
+}
