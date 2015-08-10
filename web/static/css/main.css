@@ -62,6 +62,9 @@ form.order-form label:after {
 ul.order-list .collection-item.avatar {
   padding: 10px 69px 10px 78px;
 }
+ul.order-list .collection-item.avatar:hover {
+  background: #f5f5f5;
+}
 ul.order-list .collection-item.avatar .circle {
   width: 48px;
   height: 48px;
@@ -72,4 +75,14 @@ ul.order-list .collection-item.avatar .circle {
   width: auto;
   display: block;
   margin: 8px;
+}
+
+div.nav-balance {
+  font-size: 1rem;
+  display: block;
+  padding: 0 15px;
+}
+div.nav-balance i {
+  font-size: 1.4rem;
+  margin: 0;
 }

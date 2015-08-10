@@ -71,6 +71,10 @@ ul.order-list {
   .collection-item.avatar {
     padding: 10px 69px 10px 78px;
 
+    &:hover {
+      background: #f5f5f5;
+    }
+
     .circle {
       width: 48px;
       height: 48px;
@@ -84,4 +88,16 @@ ul.order-list {
   width: auto;
   display: block;
   margin: 8px;
+}
+
+// Строка баланса
+div.nav-balance {
+  font-size: 1rem;
+  display: block;
+  padding: 0 15px;
+
+  i {
+    font-size: 1.4rem;
+    margin: 0;
+  }
 }
