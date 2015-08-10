@@ -27,7 +27,7 @@ function install_nginx() {
         --with-http_realip_module \
         --with-http_gzip_static_module \
         --with-ipv6 \
-        --add-module=${BUILD_DIR}/hm-${HM_VERSION}/headers-more-nginx-module-${HM_VERSION} \
+        --add-module=${BUILD_DIR}/headers-more-nginx-module-${HM_VERSION} \
         --prefix=${ROOT_DIR}/nginx
 
     echo "Compiling nginx."
