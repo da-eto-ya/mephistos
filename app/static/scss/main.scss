@@ -42,3 +42,20 @@ main {
   }
 }
 
+// Форма логина
+.login-form-container {
+  min-height: 20rem;
+  margin: 3em 0;
+
+  form.login-form {
+    label:after {
+      width: 17em;
+    }
+
+    .login-form-inner {
+      margin-top: 2rem;
+      margin-bottom: 2rem;
+    }
+  }
+}
+
