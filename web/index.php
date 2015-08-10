@@ -1,4 +1,5 @@
 <?php
 
-phpinfo();
+require_once __DIR__ . '/../app/app.php';
 
+app_start();
