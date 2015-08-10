@@ -52,6 +52,8 @@ http {
 
     port_in_redirect off;
     server_tokens off;
+    more_clear_headers Server;
+    more_clear_headers 'X-Powered-By';
 
     tcp_nopush on; # off may be better for Comet/long-poll stuff
     tcp_nodelay off; # on may be better for Comet/long-poll stuff
