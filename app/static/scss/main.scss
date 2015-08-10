@@ -42,20 +42,26 @@ main {
   }
 }
 
-// Форма логина
-.login-form-container {
+// Формы
+.form-container {
   min-height: 20rem;
   margin: 3em 0;
 
-  form.login-form {
-    label:after {
-      width: 17em;
-    }
-
-    .login-form-inner {
-      margin-top: 2rem;
-      margin-bottom: 2rem;
+  form {
+    .form-inner {
+      margin: 2rem;
     }
   }
 }
 
+form.login-form {
+  label:after {
+    width: 17rem;
+  }
+}
+
+form.order-form {
+  label:after {
+    width: 20rem;
+  }
+}

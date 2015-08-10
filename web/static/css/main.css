@@ -43,14 +43,18 @@ main {
   padding-top: 6px;
 }
 
-.login-form-container {
+.form-container {
   min-height: 20rem;
   margin: 3em 0;
 }
-.login-form-container form.login-form label:after {
-  width: 17em;
+.form-container form .form-inner {
+  margin: 2rem;
 }
-.login-form-container form.login-form .login-form-inner {
-  margin-top: 2rem;
-  margin-bottom: 2rem;
+
+form.login-form label:after {
+  width: 17rem;
+}
+
+form.order-form label:after {
+  width: 20rem;
 }
