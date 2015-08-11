@@ -241,6 +241,8 @@ function db_stmt_execute($statement)
         return false;
     }
 
+    // TODO: add log
+
     /** @var mysqli_stmt $statement */
     return mysqli_stmt_execute($statement);
 }
@@ -313,3 +315,5 @@ function db_fetch_all($result)
     /** @var mysqli_result $result */
     return mysqli_fetch_all($result, MYSQLI_ASSOC);
 }
+
+// TODO: add last inserted and affected rows
