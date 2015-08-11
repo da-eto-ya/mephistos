@@ -13,15 +13,15 @@ require_once __DIR__ . '/service/db.php';
  */
 function app_start(array $config)
 {
-    // тестим определение пути и конфиг
+    // тестим определение пути
     $request = [
         'path' => parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH),
         'method' => $_SERVER['REQUEST_METHOD'],
     ];
 
+    // TODO: remove
     echo '<pre>';
     var_dump($request);
-    var_dump($config);
     echo '</pre>';
 
     // подключаем логирование, БД
@@ -34,14 +34,12 @@ function app_start(array $config)
     }
 
     // тестим логирование
+    // TODO: remove
     log_alert('how', ['are' => 'you']);
     log_critical('I am critical');
 
     // тестим БД
-    $conn = db_get_connection('main');
-    // TODO: remove mysqli functions
-    echo mysqli_get_host_info($conn) . "\n";
-    echo '<pre>';
-    var_dump(db_config());
-    echo '</pre>';
+    // TODO: remove
+    echo '<p>DB main' . mysqli_get_host_info(db_get_connection('main')) . '</p>';
+    echo '<p>DB orders_db' . mysqli_get_host_info(db_get_connection('orders_db')) . '</p>';
 }
