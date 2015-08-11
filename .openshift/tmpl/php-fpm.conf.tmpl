@@ -484,6 +484,9 @@ security.limit_extensions = .php
 ;env[TMPDIR] = /tmp
 ;env[TEMP] = /tmp
 
+; Pass env vars to PHP (OpenShift usage)
+clear_env = no
+
 ; Additional php.ini defines, specific to this pool of workers. These settings
 ; overwrite the values previously defined in the php.ini. The directives are the
 ; same as the PHP SAPI:
