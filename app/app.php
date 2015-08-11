@@ -4,6 +4,7 @@
  */
 
 require_once __DIR__ . '/service/log.php';
+require_once __DIR__ . '/service/db.php';
 
 /**
  * Запуск приложения
@@ -23,12 +24,24 @@ function app_start(array $config)
     var_dump($config);
     echo '</pre>';
 
-    // подключаем логирование
+    // подключаем логирование, БД
     if (isset($config['log'])) {
         log_config($config['log']);
+    }
+
+    if (isset($config['db'])) {
+        db_config($config['db']);
     }
 
     // тестим логирование
     log_alert('how', ['are' => 'you']);
     log_critical('I am critical');
+
+    // тестим БД
+    $conn = db_get_connection('main');
+    // TODO: remove mysqli functions
+    echo mysqli_get_host_info($conn) . "\n";
+    echo '<pre>';
+    var_dump(db_config());
+    echo '</pre>';
 }
