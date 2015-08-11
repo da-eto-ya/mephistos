@@ -13,18 +13,18 @@ require_once __DIR__ . '/service/db.php';
  */
 function app_start(array $config)
 {
+    // TODO: remove all dumps
+    echo '<pre>';
+
     // тестим определение пути
     $request = [
         'path' => parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH),
         'method' => $_SERVER['REQUEST_METHOD'],
     ];
 
-    // TODO: remove
-    echo '<pre>';
     var_dump($request);
-    echo '</pre>';
 
-    // подключаем логирование, БД
+    // конфигурируем модули
     if (isset($config['log'])) {
         log_config($config['log']);
     }
@@ -33,13 +33,9 @@ function app_start(array $config)
         db_config($config['db']);
     }
 
-    // тестим логирование
-    // TODO: remove
-    log_alert('how', ['are' => 'you']);
-    log_critical('I am critical');
-
     // тестим БД
-    // TODO: remove
-    echo '<p>DB main' . mysqli_get_host_info(db_get_connection('main')) . '</p>';
-    echo '<p>DB orders_db' . mysqli_get_host_info(db_get_connection('orders_db')) . '</p>';
+    var_dump(db_fetch_all(db_query_raw_unsafe(db_connection(db_lookup('users')), 'SELECT * FROM `users`')));
+    var_dump(db_fetch_all(db_query('orders', 'SELECT * FROM `orders`')));
+
+    echo '</pre>';
 }
