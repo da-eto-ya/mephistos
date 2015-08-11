@@ -1,3 +1,6 @@
+# logs, tmp, etc.
+/log/
+
 # gulp, npm, other tools
 /node_modules/
 /.sass-cache/
