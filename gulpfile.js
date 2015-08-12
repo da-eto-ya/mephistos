@@ -23,7 +23,10 @@ var conf = {
     paths: {
         src: 'app/static/',
         dest: 'web/static/',
-        materialize: 'lib/materialize-v0.97.0/',
+        materialize: {
+            src: 'node_modules/materialize-css/',
+            dest: 'web/static/lib/materialize-v0.97.0/'
+        },
         html: 'web/**/*.html'
     }
 };
@@ -64,31 +67,62 @@ gulp.task('images', function () {
 
 // компилируем Materialize sass
 gulp.task('lib-materialize-css', function () {
-    return sass(conf.paths.src + conf.paths.materialize + 'sass/materialize.scss', {
+    return sass(conf.paths.materialize.src + 'sass/materialize.scss', {
         style: 'expanded',
         container: 'gulp-ruby-sass-materialize'
     })
         .pipe(autoprefixer(conf.browsersTarget))
-        .pipe(gulp.dest(conf.paths.dest + conf.paths.materialize + 'css'))
+        .pipe(gulp.dest(conf.paths.materialize.dest + 'css'))
         .pipe(rename({suffix: '.min'}))
         .pipe(minifycss())
-        .pipe(gulp.dest(conf.paths.dest + conf.paths.materialize + 'css'));
+        .pipe(gulp.dest(conf.paths.materialize.dest + 'css'));
 });
 
 // компилируем (копируем) Materialize js
+// TODO: удалить неиспользуемые модули из сборки
 gulp.task('lib-materialize-js', function () {
     return gulp.src([
-        conf.paths.src + conf.paths.materialize + 'js/bin/*.js'
+        conf.paths.materialize.src + "js/jquery.easing.1.3.js",
+        conf.paths.materialize.src + "js/animation.js",
+        conf.paths.materialize.src + "js/velocity.min.js",
+        conf.paths.materialize.src + "js/hammer.min.js",
+        conf.paths.materialize.src + "js/jquery.hammer.js",
+        conf.paths.materialize.src + "js/global.js",
+        conf.paths.materialize.src + "js/collapsible.js",
+        conf.paths.materialize.src + "js/dropdown.js",
+        conf.paths.materialize.src + "js/leanModal.js",
+        conf.paths.materialize.src + "js/materialbox.js",
+        conf.paths.materialize.src + "js/parallax.js",
+        conf.paths.materialize.src + "js/tabs.js",
+        conf.paths.materialize.src + "js/tooltip.js",
+        conf.paths.materialize.src + "js/waves.js",
+        conf.paths.materialize.src + "js/toasts.js",
+        conf.paths.materialize.src + "js/sideNav.js",
+        conf.paths.materialize.src + "js/scrollspy.js",
+        conf.paths.materialize.src + "js/forms.js",
+        conf.paths.materialize.src + "js/slider.js",
+        conf.paths.materialize.src + "js/cards.js",
+        conf.paths.materialize.src + "js/pushpin.js",
+        conf.paths.materialize.src + "js/buttons.js",
+        conf.paths.materialize.src + "js/transitions.js",
+        conf.paths.materialize.src + "js/scrollFire.js",
+        conf.paths.materialize.src + "js/date_picker/picker.js",
+        conf.paths.materialize.src + "js/date_picker/picker.date.js",
+        conf.paths.materialize.src + "js/character_counter.js"
     ])
-        .pipe(gulp.dest(conf.paths.dest + conf.paths.materialize + 'js'));
+        .pipe(concat('materialize.js'))
+        .pipe(gulp.dest(conf.paths.materialize.dest + 'js'))
+        .pipe(rename({suffix: '.min'}))
+        .pipe(uglify())
+        .pipe(gulp.dest(conf.paths.materialize.dest + 'js'));
 });
 
 // копируем прочие Materialize assets
 gulp.task('lib-materialize-assets', function () {
     return gulp.src([
-        conf.paths.src + conf.paths.materialize + 'font/**/*'
+        conf.paths.materialize.src + 'font/**/*'
     ])
-        .pipe(gulp.dest(conf.paths.dest + conf.paths.materialize + 'font'));
+        .pipe(gulp.dest(conf.paths.materialize.dest + 'font'));
 });
 
 // целиком библиотека Materialize
