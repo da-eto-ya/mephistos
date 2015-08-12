@@ -49,8 +49,15 @@ function router_config(array $config = null)
     return $_config;
 }
 
+/**
+ * Определяет параметры контроллера (роут) по переданному пути.
+ *
+ * @param string $path
+ * @return array|bool false в случае неудачи
+ */
 function router_resolve_route($path)
 {
+    $path = (string) $path;
     $config = router_config();
     $prefix = '';
     $action = 'index';
@@ -92,11 +99,19 @@ function router_resolve_route($path)
     ];
 }
 
+/**
+ * Формирует строку URL для заданного роута.
+ *
+ * @param string $controller
+ * @param string $action
+ * @param array $params
+ * @return string
+ */
 function router_get_path($controller, $action = 'index', $params = [])
 {
     $params = (array) $params;
 
-    if ('' == $action) {
+    if (!$action) {
         $action = 'index';
     }
 
@@ -106,7 +121,7 @@ function router_get_path($controller, $action = 'index', $params = [])
         $segments = array_merge([$controller, $action], $params);
     }
 
-    $segments = array_map('urlencode', $segments);
+    $segments = array_map('urlencode', array_map('strval', $segments));
 
     return '/' . join('/', $segments);
 }
