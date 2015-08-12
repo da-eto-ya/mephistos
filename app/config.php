@@ -9,6 +9,14 @@ return [
         'directory' => getenv('OPENSHIFT_LOG_DIR') ?: realpath(__DIR__ . '/../log'),
         'filename' => 'mephistos.log',
     ],
+    // конфигурация роутинга
+    'router' => [
+        // роуты в виде 'префикс' => 'контроллер'
+        'routes' => [
+            'order' => 'order',
+            '' => 'main',
+        ],
+    ],
     // конфигурация БД
     'db' => [
         // доступные соединения

@@ -1,9 +1,10 @@
 <?php
 /**
- * Сервис работы с БД
+ * Сервис работы с БД.
  */
 
-require_once __DIR__ . '/log.php';
+require_once __DIR__ . '/../require.php';
+require_services('log');
 
 /**
  * Устанавливает или возвращает конфигурацию БД.
