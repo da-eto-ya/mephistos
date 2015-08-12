@@ -137,8 +137,8 @@ error_log = ${OPENSHIFT_DIY_LOG_DIR}/php-fpm.log
 ; Unix user/group of processes
 ; Note: The user is mandatory. If the group is not set, the default user's group
 ;       will be used.
-user = nobody
-group = nobody
+user = ${USER}
+;group = nobody
 
 ; The address on which to accept FastCGI requests.
 ; Valid syntaxes are:
