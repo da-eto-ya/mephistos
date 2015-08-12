@@ -5,7 +5,6 @@ var gulp = require('gulp'),
     minifycss = require('gulp-minify-css'),
     jshint = require('gulp-jshint'),
     uglify = require('gulp-uglify'),
-    imagemin = require('gulp-imagemin'),
     rename = require('gulp-rename'),
     concat = require('gulp-concat'),
     cache = require('gulp-cache'),
@@ -15,11 +14,6 @@ var gulp = require('gulp'),
 // общий конфиг
 var conf = {
     browsersTarget: '> 5%',
-    imagemin: {
-        optimizationLevel: 5,
-        progressive: true,
-        interlaced: true
-    },
     paths: {
         src: 'app/static/',
         dest: 'web/static/',
@@ -56,13 +50,6 @@ gulp.task('scripts', function () {
         .pipe(rename({suffix: '.min'}))
         .pipe(uglify())
         .pipe(gulp.dest(conf.paths.dest + 'js'));
-});
-
-// минифицируем используемые изображения
-gulp.task('images', function () {
-    return gulp.src(conf.paths.src + 'img/**/*')
-        .pipe(cache(imagemin(conf.imagemin)))
-        .pipe(gulp.dest(conf.paths.dest + 'img'));
 });
 
 // компилируем Materialize sass
@@ -142,13 +129,12 @@ gulp.task('clean', function (cb) {
     del([
         conf.paths.dest + 'css',
         conf.paths.dest + 'js',
-        conf.paths.dest + 'img',
         conf.paths.dest + 'lib'
     ], cb)
 });
 
 // сборка
-gulp.task('build', ['libs', 'styles', 'scripts', 'images']);
+gulp.task('build', ['libs', 'styles', 'scripts']);
 
 // полная пересборка
 gulp.task('rebuild', ['clean'], function () {
@@ -166,8 +152,6 @@ gulp.task('watch', function () {
     gulp.watch(conf.paths.src + 'scss/**/*.scss', ['styles']);
     // смотреть за скриптами
     gulp.watch(conf.paths.src + 'js/**/*.js', ['scripts']);
-    // смотреть за изображениями
-    gulp.watch(conf.paths.src + 'img/**/*', ['images']);
 
     // инстанс сервера LiveReload
     livereload.listen();
