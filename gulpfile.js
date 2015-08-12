@@ -24,7 +24,6 @@ var conf = {
         src: 'app/static/',
         dest: 'web/static/',
         materialize: 'lib/materialize-v0.97.0/',
-        jquery: 'lib/jquery-2.1.4/',
         html: 'web/**/*.html'
     }
 };
@@ -99,18 +98,9 @@ gulp.task('lib-materialize', [
     'lib-materialize-assets'
 ]);
 
-// библиотека jQuery
-gulp.task('lib-jquery', function () {
-    return gulp.src([
-        conf.paths.src + conf.paths.jquery + '**/*'
-    ])
-        .pipe(gulp.dest(conf.paths.dest + conf.paths.jquery));
-});
-
 // все библиотеки
 gulp.task('libs', [
-    'lib-materialize',
-    'lib-jquery'
+    'lib-materialize'
 ]);
 
 // очистка ассетов
