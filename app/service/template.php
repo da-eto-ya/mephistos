@@ -18,7 +18,8 @@ require_modules('util/template_helpers');
 function template_config(array $config = null)
 {
     static $_config = [
-        'directory' => __DIR__ . '/../view',
+        'directory' => __DIR__ . '/../template',
+        'postfix' => '.phtml',
     ];
 
     if (null !== $config) {
@@ -28,6 +29,10 @@ function template_config(array $config = null)
             if ($dir && is_dir($dir)) {
                 $_config['directory'] = $dir;
             }
+        }
+
+        if (isset($config['postfix'])) {
+            $_config['postfix'] = (string) $config['postfix'];
         }
     }
 
@@ -55,22 +60,23 @@ function template_render_raw($filename, array $params = [])
     extract($params);
     ob_start();
     include _template_internal_stack();
+    $result = (string) ob_get_clean();
 
-    return (string) ob_get_clean();
+    return $result;
 }
 
 /**
  * Рендер указанного шаблона.
  * Использовать с крайней осторожностью и при крайней необходимости.
  *
- * @param string $template путь до шаблона, исключая базовую директорию и расширение .php
+ * @param string $template путь до шаблона, исключая базовую директорию и расширение
  * @param array  $params
  * @return string результат рендера
  */
 function template_render($template, array $params = [])
 {
     $config = template_config();
-    $filename = "{$config['directory']}/{$template}.php";
+    $filename = "{$config['directory']}/{$template}{$config['postfix']}";
 
     return template_render_raw($filename, $params);
 }

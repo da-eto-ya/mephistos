@@ -11,5 +11,5 @@ require_services('request', 'response', 'template');
  */
 function controller_main()
 {
-    response_text(template_render('main'));
+    response_send(template_render('main'));
 }

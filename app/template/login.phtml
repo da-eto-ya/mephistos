@@ -1,0 +1,46 @@
+<?php
+/** @var array $form форма логина */
+?><!doctype html>
+<html lang="ru">
+<?= template_render('_elements/head', ['heading' => 'Login']); ?>
+<body>
+<?= template_render('_elements/header'); ?>
+
+<main>
+    <div class="container">
+        <div class="row center form-container">
+            <form action="<?= router_get_path('login') ?>" method="post"
+                  class="col s12 m8 offset-m2 l6 offset-l3 card hoverable login-form">
+                <div class="form-inner">
+                    <h3>Войти</h3>
+
+                    <div class="row">
+                        <div class="input-field col s12">
+                            <input id="email" name="email" value="<?= e($form['email']) ?>" type="email"
+                                   class="validate" required>
+                            <label for="email" data-error="Введите корректный email">Email</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s12">
+                            <input id="password" name="password" value="<?= e($form['email']) ?>" type="password"
+                                   class="validate" required>
+                            <label for="password">Пароль</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s12">
+                            <button type="submit"
+                                    class="col s12 waves-effect waves-light btn-large deep-orange darken-4">Войти
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
+
+<?= template_render('_elements/footer'); ?>
+</body>
+</html>

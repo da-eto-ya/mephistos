@@ -9,7 +9,7 @@
  * @param string $message
  * @param int $code
  */
-function response_text($message = '', $code = 200)
+function response_send($message = '', $code = 200)
 {
     http_response_code((int) $code);
     echo $message;
@@ -35,5 +35,5 @@ function response_json($result, $code = 200)
  */
 function response_not_found($message = 'Not found')
 {
-    response_text($message, 404);
+    response_send($message, 404);
 }

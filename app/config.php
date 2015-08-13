@@ -13,7 +13,7 @@ return [
     'router' => [
         // роуты в виде 'префикс' => 'контроллер'
         'routes' => [
-            'order' => 'order',
+            'login' => 'login',
             '' => 'main',
         ],
     ],
@@ -47,6 +47,7 @@ return [
     ],
     // конфигурация шаблонизатора
     'template' => [
-        'directory' => __DIR__ . '/view',
+        'directory' => __DIR__ . '/template',
+        'postfix' => '.phtml',
     ],
 ];
