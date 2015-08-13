@@ -1,0 +1,75 @@
+<?php
+/** @var string $name имя для приветствия */
+?><!doctype html>
+<html lang="ru">
+<?= template_render('_elements/head', ['heading' => '']); ?>
+<body>
+<?= template_render('_elements/header'); ?>
+
+<main>
+    <div class="section no-pad-bot">
+        <div class="container">
+            <br><br>
+
+            <h2 class="header center grey-text text-darken-3">Mephistos — самый абстрактный сервис заказов</h2>
+
+            <div class="row center">
+                <h5 class="header col s12 light">Вы можете заказать что угодно и быть уверенными, что исполнители
+                    действительно исполнили ваш заказ</h5>
+            </div>
+            <div class="row center">
+                <a href="<?= router_get_path('login'); ?>" title="Войти на сайт"
+                   class="btn-large waves-effect waves-light deep-orange">Присоединиться</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="section">
+            <div class="row">
+                <div class="col s12 m4">
+                    <div class="promo-block">
+                        <div class="center deep-orange-text"><i class="material-icons mdi-image-flash-on medium"></i>
+                        </div>
+                        <h5 class="center">Скорость зашкаливает</h5>
+
+                        <p class="light">Просто попробуйте что-нибудь заказать и вы увидите, насколько быстро найдётся
+                            исполнитель для вашего заказа. Наш быстрый сайт не разочарует вас никогда. Скорость — наш
+                            главный приоритет, убедитесь в этом!
+                        </p>
+                    </div>
+                </div>
+
+                <div class="col s12 m4">
+                    <div class="promo-block">
+                        <div class="center deep-orange-text"><i class="material-icons mdi-social-group medium"></i>
+                        </div>
+                        <h5 class="center">Большое сообщество</h5>
+
+                        <p class="light">Мы постоянно работаем над расширением нашей базы пользователей. В данный момент
+                            у нас достаточно исполнителей, чтобы покрыть нужды самых взыскательных заказчиков, а заказов
+                            столько, что всегда найдётся подходящий любому исполнителю.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="col s12 m4">
+                    <div class="promo-block">
+                        <div class="center deep-orange-text"><i class="material-icons mdi-action-android medium"></i>
+                        </div>
+                        <h5 class="center">Расплата в срок</h5>
+
+                        <p class="light">С нашим сервисом вы забудете о том, что такое нечестные заказчики и нерадивые
+                            исполнители. Если заказ или оплата не будут выполнены, то мы возместим
+                            ваш ущерб, а нечестный пользователь будет наказан — мы заберём его душу!
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<?= template_render('_elements/footer'); ?>
+</body>
+</html>

@@ -28,7 +28,7 @@ function log_config(array $config = null)
 
     if (null !== $config) {
         if (isset($config['directory']) && is_string($config['directory']) && file_exists($config['directory'])) {
-            $config['path'] = $config['directory'] . DIRECTORY_SEPARATOR . $config['filename'];
+            $config['path'] = $config['directory'] . '/' . $config['filename'];
             $config['type'] = 3;
             $_config = $config;
         } else if (isset($config['type']) && 0 === $config['type']) {

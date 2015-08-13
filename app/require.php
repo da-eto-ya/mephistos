@@ -8,7 +8,7 @@
  *
  * @param array $modules
  */
-function require_raw(...$modules)
+function require_modules(...$modules)
 {
     static $required = [];
     static $dir = null;
@@ -37,7 +37,7 @@ function require_raw(...$modules)
  * Подключение файлов с общим префиксом (например, директория).
  *
  * @param string $prefix
- * @param array $modules
+ * @param array  $modules
  */
 function require_prefixed($prefix, ...$modules)
 {
@@ -48,7 +48,7 @@ function require_prefixed($prefix, ...$modules)
         $prefixed[] = $prefix . $module;
     }
 
-    require_raw(...$prefixed);
+    require_modules(...$prefixed);
 }
 
 /**

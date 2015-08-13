@@ -1,17 +1,17 @@
 <?php
 /**
- * Основной компонент приложения
+ * Основной компонент приложения.
  */
 
 require_once __DIR__ . '/require.php';
-require_services('db', 'log', 'router', 'request', 'response');
+require_services('db', 'log', 'router', 'request', 'response', 'template');
 
 /**
- * Запуск приложения
+ * Запуск приложения.
  *
  * @param array $config конфигурация приложения
  */
-function app_start(array $config)
+function app_run(array $config)
 {
     // конфигурируем модули
     if (isset($config['log'])) {
@@ -26,6 +26,10 @@ function app_start(array $config)
         db_config($config['db']);
     }
 
+    if (isset($config['template'])) {
+        template_config($config['template']);
+    }
+
     // резолвим и передаём запрос контроллеру
     $request = request_get_current();
     $route = router_resolve_route($request['path']);
@@ -33,6 +37,7 @@ function app_start(array $config)
     // не найден контроллер
     if (!$route) {
         response_not_found();
+
         return;
     }
 
@@ -43,6 +48,7 @@ function app_start(array $config)
     // не найден подходящий метод для вызова
     if (!is_callable($route['callable'])) {
         response_not_found();
+
         return;
     }
 

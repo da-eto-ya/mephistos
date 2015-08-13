@@ -87,6 +87,7 @@ function db_connection($name)
 
         if (!isset($config['connections'][$name])) {
             log_critical("Can't find connection with name " . $name, $config);
+
             return false;
         }
 
@@ -94,7 +95,10 @@ function db_connection($name)
         $link = mysqli_connect($conn['host'], $conn['username'], $conn['password'], $conn['database'], $conn['port']);
 
         if (!$link) {
-            log_alert('DB connection error: (' . mysqli_connect_errno() . ') ' . mysqli_connect_error());
+            $code = mysqli_connect_errno();
+            $error = mysqli_connect_error();
+            log_alert("DB connection error: ({$code}) {$error}");
+
             return false;
         }
 
@@ -119,11 +123,14 @@ function db_lookup($tableName)
 
         if (isset($config['lookup'][$tableName])) {
             $lookup[$tableName] = $config['lookup'][$tableName];
-        } else if ($config['default']) {
-            $lookup[$tableName] = $config['default'];
         } else {
-            log_error("DB lookup_table error: can't find `{$tableName}`");
-            return false;
+            if ($config['default']) {
+                $lookup[$tableName] = $config['default'];
+            } else {
+                log_error("DB lookup_table error: can't find `{$tableName}`");
+
+                return false;
+            }
         }
     }
 
@@ -144,7 +151,10 @@ function db_query_raw_unsafe($connection, $query)
     $result = mysqli_query($connection, $query);
 
     if (false === $result) {
-        log_error('DB query_raw error: (' . mysqli_errno($connection) . ') ' . mysqli_error($connection));
+        $code = mysqli_errno($connection);
+        $error = mysqli_error($connection);
+        log_error("DB query_raw error: ({$code}) {$error}");
+
         return false;
     }
 
@@ -165,7 +175,10 @@ function db_prepare_raw($connection, $query)
     $statement = mysqli_prepare($connection, $query);
 
     if (false === $statement) {
-        log_error('DB prepare_raw error: (' . mysqli_errno($connection) . ') ' . mysqli_error($connection));
+        $code = mysqli_errno($connection);
+        $error = mysqli_error($connection);
+        log_error("DB prepare_raw error: ({$code}) {$error}");
+
         return false;
     }
 
@@ -192,7 +205,7 @@ function db_prepare($tableName, $query)
  * Привязка параметров к подготовленному запросу.
  *
  * @param object $statement
- * @param array $params
+ * @param array  $params
  * @return bool
  */
 function db_stmt_bind_params($statement, array $params = [])
@@ -210,12 +223,16 @@ function db_stmt_bind_params($statement, array $params = [])
     foreach ($params as $value) {
         if (is_int($value) || is_bool($value)) {
             $types[] = 'i';
-        } else if (is_float($value) || is_double($value)) {
-            $types[] = 'd';
-        } else if ('blob' == gettype($value)) {
-            $types[] = 'b';
         } else {
-            $types[] = 's';
+            if (is_float($value) || is_double($value)) {
+                $types[] = 'd';
+            } else {
+                if ('blob' == gettype($value)) {
+                    $types[] = 'b';
+                } else {
+                    $types[] = 's';
+                }
+            }
         }
     }
 
@@ -238,14 +255,20 @@ function db_stmt_bind_params($statement, array $params = [])
  */
 function db_stmt_execute($statement)
 {
+    /** @var mysqli_stmt $statement */
     if (!$statement) {
         return false;
     }
 
-    // TODO: add log
+    $result = mysqli_stmt_execute($statement);
 
-    /** @var mysqli_stmt $statement */
-    return mysqli_stmt_execute($statement);
+    if (false === $result) {
+        $code = mysqli_stmt_errno($statement);
+        $error = mysqli_stmt_error($statement);
+        log_warning("Can't execute prepared statement; error: ({$code}) {$error}");
+    }
+
+    return $result;
 }
 
 /**
@@ -261,6 +284,7 @@ function db_stmt_result($statement)
     }
 
     /** @var mysqli_stmt $statement */
+
     return mysqli_stmt_get_result($statement);
 }
 
@@ -269,7 +293,7 @@ function db_stmt_result($statement)
  *
  * @param string $tableName
  * @param string $query
- * @param array $params
+ * @param array  $params
  * @return bool|object
  */
 function db_query($tableName, $query, array $params = [])

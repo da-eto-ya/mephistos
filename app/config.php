@@ -6,7 +6,7 @@
 return [
     // конфигурация логирования
     'log' => [
-        'directory' => getenv('OPENSHIFT_LOG_DIR') ?: realpath(__DIR__ . '/../log'),
+        'directory' => getenv('OPENSHIFT_LOG_DIR') ?: __DIR__ . '/../log',
         'filename' => 'mephistos.log',
     ],
     // конфигурация роутинга
@@ -44,5 +44,9 @@ return [
         ],
         // соединение по умолчанию (не указанные в 'tables' таблицы ищутся в нём)
         'default' => 'main',
+    ],
+    // конфигурация шаблонизатора
+    'template' => [
+        'directory' => __DIR__ . '/view',
     ],
 ];
