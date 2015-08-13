@@ -107,6 +107,23 @@ http {
         # https://en.wikipedia.org/wiki/HTTP_Strict_Transport_Security
         add_header Strict-Transport-Security max-age=691200;
 
+        error_page 403 /403.html;
+        location = /403.html {
+            allow  all;
+            internal;
+        }
+
+        error_page 404 /404.html;
+        location = /404.html {
+            internal;
+        }
+
+        error_page 500 502 503 504 = /50x.html;
+        location = /50x.html {
+            internal;
+        }
+
+
         location / {
             index  index.html  index.htm  index.php ;
 
