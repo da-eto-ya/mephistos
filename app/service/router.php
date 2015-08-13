@@ -60,7 +60,7 @@ function router_resolve_route($path)
     $path = (string) $path;
     $config = router_config();
     $prefix = '';
-    $action = 'index';
+    $action = '';
     $params = [];
 
     $segments = array_map('urldecode', explode('/', ltrim($path, '/')));
@@ -82,7 +82,7 @@ function router_resolve_route($path)
     }
 
     // экшен должен быть похож на часть имени функции
-    if (!preg_match('/^\w+$/', $action)) {
+    if (!preg_match('/^\w*$/', $action)) {
         return false;
     }
 
@@ -90,8 +90,10 @@ function router_resolve_route($path)
         $params = array_slice($segments, 2);
     }
 
+    $callable = $action ? "controller_{$route['controller']}_{$action}" : "controller_{$route['controller']}";
+
     return [
-        'callable' => "controller_{$route['controller']}_{$action}",
+        'callable' => $callable,
         'params' => $params,
         'controller' => $route['controller'],
         'action' => $action,
@@ -104,18 +106,14 @@ function router_resolve_route($path)
  *
  * @param string $controller
  * @param string $action
- * @param array $params
+ * @param array  $params
  * @return string
  */
-function router_get_path($controller, $action = 'index', $params = [])
+function router_get_path($controller, $action = '', $params = [])
 {
     $params = (array) $params;
 
-    if (!$action) {
-        $action = 'index';
-    }
-
-    if ('index' == $action && !$params) {
+    if ('' == $action && !$params) {
         $segments = [$controller];
     } else {
         $segments = array_merge([$controller, $action], $params);
