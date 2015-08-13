@@ -158,6 +158,8 @@ http {
             fastcgi_param PATH_INFO $fastcgi_script_name;
 
             include fastcgi_params;
+
+            fastcgi_intercept_errors on;
         }
     }
 
