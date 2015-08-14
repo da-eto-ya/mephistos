@@ -11,16 +11,19 @@ require_services('request', 'response', 'template');
  */
 function controller_login()
 {
-    $form = [
-        'email' => '',
-        'password' => '',
-    ];
+    $username = '';
+    $password = '';
 
     if (request_is_post()) {
-        // TODO: check post, create request helpers
-        $form['email'] = isset($_POST['email']) ? $_POST['email'] : '';
-        $form['password'] = isset($_POST['password']) ? $_POST['password'] : '';
+        $username = _p('username', '');
+        $password = _p('password', '');
+        // TODO: check login
     }
 
-    response_send(template_render('login', ['form' => $form]));
+    response_send(template_render('login', [
+        'form' => [
+            'username' => $username,
+            'password' => $password,
+        ],
+    ]));
 }

@@ -9,7 +9,7 @@
  * @param string $str
  * @return string
  */
-function e($str)
+function _e($str)
 {
     return htmlspecialchars($str, ENT_QUOTES, 'UTF-8');
 }

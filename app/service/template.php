@@ -56,10 +56,10 @@ function template_render_raw($filename, array $params = [])
     }
 
     // если в $params есть ключ 'filename', то он затрёт имя файла; сохраним имя
-    _template_internal_stack($filename);
+    __template_internal_stack($filename);
     extract($params);
     ob_start();
-    include _template_internal_stack();
+    include __template_internal_stack();
     $result = (string) ob_get_clean();
 
     return $result;
@@ -90,7 +90,7 @@ function template_render($template, array $params = [])
  * @param mixed ...$args сохраняется только первый аргумент
  * @return mixed null при установке значения или возвращает последний добавленный элемент и удаляет его из стека
  */
-function _template_internal_stack(...$args)
+function __template_internal_stack(...$args)
 {
     static $_values = [];
 

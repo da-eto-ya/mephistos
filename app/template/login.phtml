@@ -16,14 +16,14 @@
 
                     <div class="row">
                         <div class="input-field col s12">
-                            <input id="email" name="email" value="<?= e($form['email']) ?>" type="email"
+                            <input id="username" name="username" value="<?= _e($form['username']) ?>" type="text"
                                    class="validate" required>
-                            <label for="email" data-error="Введите корректный email">Email</label>
+                            <label for="username">Имя пользователя</label>
                         </div>
                     </div>
                     <div class="row">
                         <div class="input-field col s12">
-                            <input id="password" name="password" value="<?= e($form['email']) ?>" type="password"
+                            <input id="password" name="password" value="<?= _e($form['password']) ?>" type="password"
                                    class="validate" required>
                             <label for="password">Пароль</label>
                         </div>
