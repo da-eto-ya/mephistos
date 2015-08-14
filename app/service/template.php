@@ -49,17 +49,20 @@ function template_config(array $config = null)
  */
 function template_render_raw($filename, array $params = [])
 {
+    static $__template_internal_stack = [];
+
     if (!is_file($filename)) {
         log_alert("Can't found file for render: " . $filename);
 
         return '';
     }
 
-    // если в $params есть ключ 'filename', то он затрёт имя файла; сохраним имя
-    __template_internal_stack($filename);
-    extract($params);
+    // уберём всё лишнее из текущей области видимости перед extract
+    array_push($__template_internal_stack, $filename, $params);
+    unset($filename, $params);
+    extract(array_pop($__template_internal_stack), EXTR_SKIP);
     ob_start();
-    include __template_internal_stack();
+    include array_pop($__template_internal_stack);
     $result = (string) ob_get_clean();
 
     return $result;
@@ -79,26 +82,4 @@ function template_render($template, array $params = [])
     $filename = "{$config['directory']}/{$template}{$config['postfix']}";
 
     return template_render_raw($filename, $params);
-}
-
-/**
- * Внутреннее хранилище шаблонизатора.
- * Не использовать вне этого файла.
- *
- * @internal
- *
- * @param mixed ...$args сохраняется только первый аргумент
- * @return mixed null при установке значения или возвращает последний добавленный элемент и удаляет его из стека
- */
-function __template_internal_stack(...$args)
-{
-    static $_values = [];
-
-    if (count($args) > 0) {
-        $_values[] = $args[0];
-
-        return null;
-    } else {
-        return array_pop($_values);
-    }
 }
