@@ -4,7 +4,7 @@
  */
 
 require_once __DIR__ . '/../require.php';
-require_services('request', 'response', 'template', 'auth', 'validate');
+require_services('request', 'response', 'template', 'auth', 'validate', 'security');
 
 /**
  * Логин.
@@ -17,7 +17,10 @@ function controller_login()
     ];
     $error = '';
 
+    // TODO: здесь ещё нужна первичная аутентификация и, при успехе, переход на другой URL
+
     if (request_is_post()) {
+        $error = "Неверный логин или пароль";
         $credentials['username'] = _p('username', '');
         $credentials['password'] = _p('password', '');
 
@@ -32,10 +35,18 @@ function controller_login()
             ],
         ]);
 
-        if (!empty($validateErrors)) {
-            $error = "Неправильный логин или пароль";
-        } else {
-            // TODO: check auth
+        if (empty($validateErrors) && false !== ($user = auth_find_user($credentials))) {
+            $error = '';
+
+            // если изменился алгоритм или параметры шифрования, то обновляем хэш
+            if (security_password_needs_rehash($user['hash'])) {
+                auth_rehash_user_password($user['id'], $credentials['password']);
+            }
+
+            // TODO: установка кук
+            auth_set_access_token($user['id']);
+            response_redirect('/list.html');
+            return;
         }
     }
 

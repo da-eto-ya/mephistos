@@ -37,3 +37,13 @@ function response_not_found($message = 'Not found')
 {
     response_send($message, 404);
 }
+
+/**
+ * Редирект на указанную страницу.
+ *
+ * @param string $url
+ */
+function response_redirect($url)
+{
+    header("Location: {$url}");
+}

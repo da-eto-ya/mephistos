@@ -111,30 +111,30 @@ function db_connection($name)
 /**
  * Возвращает имя соединения для данной таблицы или false в случае ошибки.
  *
- * @param string $tableName
+ * @param string $table
  * @return string|bool
  */
-function db_lookup($tableName)
+function db_lookup($table)
 {
     static $lookup = [];
 
-    if (!isset($lookup[$tableName])) {
+    if (!isset($lookup[$table])) {
         $config = db_config();
 
-        if (isset($config['lookup'][$tableName])) {
-            $lookup[$tableName] = $config['lookup'][$tableName];
+        if (isset($config['lookup'][$table])) {
+            $lookup[$table] = $config['lookup'][$table];
         } else {
             if ($config['default']) {
-                $lookup[$tableName] = $config['default'];
+                $lookup[$table] = $config['default'];
             } else {
-                log_error("DB lookup_table error: can't find `{$tableName}`");
+                log_error("DB lookup_table error: can't find `{$table}`");
 
                 return false;
             }
         }
     }
 
-    return $lookup[$tableName];
+    return $lookup[$table];
 }
 
 /**
@@ -188,13 +188,13 @@ function db_prepare_raw($connection, $query)
 /**
  * Создание подготовленного запроса.
  *
- * @param string $tableName
+ * @param string $table
  * @param string $query
  * @return bool|object
  */
-function db_prepare($tableName, $query)
+function db_prepare($table, $query)
 {
-    if (!($connection = db_connection(db_lookup($tableName)))) {
+    if (!($connection = db_connection(db_lookup($table)))) {
         return false;
     }
 
@@ -279,30 +279,105 @@ function db_stmt_execute($statement)
  */
 function db_stmt_result($statement)
 {
+    /** @var mysqli_stmt $statement */
     if (!$statement) {
         return false;
     }
-
-    /** @var mysqli_stmt $statement */
 
     return mysqli_stmt_get_result($statement);
 }
 
 /**
+ * Возвращает количество строк, измененных запросом INSERT, UPDATE или DELETE.
+ *
+ * @param object $statement
+ * @return bool|int|string
+ */
+function db_stmt_affected_rows($statement)
+{
+    if (!$statement) {
+        return false;
+    }
+
+    /** @var mysqli_stmt $statement */
+    $result = mysqli_stmt_affected_rows($statement);
+
+    if (null === $result) {
+        return false;
+    }
+
+    return $result;
+}
+
+/**
+ * Получает число строк, затронутых последним запросом.
+ *
+ * @param object $connection
+ * @return bool|int
+ */
+function db_affected_rows_raw($connection)
+{
+    if (!$connection) {
+        return false;
+    }
+
+    /** @var mysqli $connection */
+    $result = mysqli_affected_rows($connection);
+
+    if ($result < 0) {
+        return false;
+    }
+
+    return $result;
+}
+
+/**
+ * Получает число строк, затронутых последним запросом.
+ *
+ * @param string $table
+ * @return bool|int
+ */
+function db_affected_rows($table)
+{
+    if (!($connection = db_connection(db_lookup($table)))) {
+        return false;
+    }
+
+    return db_affected_rows_raw($connection);
+}
+
+/**
  * Запрос с привязкой параметров.
  *
- * @param string $tableName
+ * @param string $table
  * @param string $query
  * @param array  $params
- * @return bool|object
+ * @return bool|object false в случае ошибки
  */
-function db_query($tableName, $query, array $params = [])
+function db_query($table, $query, array $params = [])
 {
-    $statement = db_prepare($tableName, $query);
+    $statement = db_prepare($table, $query);
     db_stmt_bind_params($statement, $params);
     db_stmt_execute($statement);
 
     return db_stmt_result($statement);
+}
+
+/**
+ * Запрос на изменение данных с привязкой параметров.
+ *
+ * @param string $table
+ * @param string $query
+ * @param array  $params
+ * @return bool|int false в случае ошибки, иначе - количество затронутых строк
+ */
+function db_exec($table, $query, array $params = [])
+{
+    $statement = db_prepare($table, $query);
+    db_stmt_bind_params($statement, $params);
+    db_stmt_execute($statement);
+
+    return db_stmt_affected_rows($statement);
 }
 
 /**
@@ -341,4 +416,66 @@ function db_fetch_all($result)
     return mysqli_fetch_all($result, MYSQLI_ASSOC);
 }
 
-// TODO: add last inserted and affected rows
+/**
+ * Освобождает ресурсы результата.
+ *
+ * @param object $result
+ */
+function db_free_result($result)
+{
+    /** @var mysqli_result $result */
+    mysqli_free_result($result);
+}
+
+/**
+ * Возвращает автоматически генерируемый ID, используя последний запрос.
+ *
+ * @param object $connection
+ * @return bool|int
+ */
+function db_inserted_id_raw($connection)
+{
+    if (!$connection) {
+        return false;
+    }
+
+    /** @var mysqli $connection */
+    return mysqli_insert_id($connection);
+}
+
+/**
+ * Возвращает автоматически генерируемый ID, используя последний запрос.
+ *
+ * @param string $table
+ * @return bool|int
+ */
+function db_inserted_id($table)
+{
+    if (!($connection = db_connection(db_lookup($table)))) {
+        return false;
+    }
+
+    return db_inserted_id_raw($connection);
+}
+
+/**
+ * Запрос и получение одной строки в виде ассоциативного массива.
+ *
+ * @param string $table
+ * @param string $query
+ * @param array  $params
+ * @return array|bool false в случае пустого результата или ошибки
+ */
+function db_get_one($table, $query, array $params = [])
+{
+    $result = db_query($table, $query, $params);
+
+    if (false === $result) {
+        return false;
+    }
+
+    $row = db_fetch_assoc($result);
+    db_free_result($result);
+
+    return $row ?: false;
+}

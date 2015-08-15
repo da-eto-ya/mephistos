@@ -50,4 +50,8 @@ return [
         'directory' => __DIR__ . '/template',
         'postfix' => '.phtml',
     ],
+    // компонент безопасности
+    'security' => [
+        'cost' => 11,
+    ],
 ];

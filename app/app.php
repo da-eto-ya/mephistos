@@ -4,7 +4,7 @@
  */
 
 require_once __DIR__ . '/require.php';
-require_services('db', 'log', 'router', 'request', 'response', 'template');
+require_services('db', 'log', 'router', 'request', 'response', 'template', 'security');
 
 /**
  * Запуск приложения.
@@ -14,20 +14,18 @@ require_services('db', 'log', 'router', 'request', 'response', 'template');
 function app_run(array $config)
 {
     // конфигурируем модули
-    if (isset($config['log'])) {
-        log_config($config['log']);
-    }
+    $configurableModules = [
+        'log' => 'log_config',
+        'router' => 'router_config',
+        'db' => 'db_config',
+        'template' => 'template_config',
+        'security' => 'security_config',
+    ];
 
-    if (isset($config['router'])) {
-        router_config($config['router']);
-    }
-
-    if (isset($config['db'])) {
-        db_config($config['db']);
-    }
-
-    if (isset($config['template'])) {
-        template_config($config['template']);
+    foreach ($configurableModules as $key => $callable) {
+        if (isset($config[$key])) {
+            call_user_func($callable, $config[$key]);
+        }
     }
 
     // резолвим и передаём запрос контроллеру
