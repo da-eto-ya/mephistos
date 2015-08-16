@@ -13,7 +13,8 @@ return [
     'router' => [
         // роуты в виде 'префикс' => 'контроллер'
         'routes' => [
-            'login' => 'login',
+            'login',
+            'orders',
             '' => 'main',
         ],
     ],

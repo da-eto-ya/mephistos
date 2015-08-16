@@ -25,7 +25,9 @@ function router_config(array $config = null)
                 $dirLength = strlen($dir);
             }
 
-            foreach ($config['routes'] as $prefix => $controller) {
+            foreach ($config['routes'] as $key => $controller) {
+                $prefix = is_int($key) ? $controller : $key;
+
                 if (!isset($cachedControllers[$controller])) {
                     $filename = realpath(__DIR__ . "/../controller/{$controller}.php");
 
