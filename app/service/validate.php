@@ -36,7 +36,7 @@ function validate_regex($value, $regex = '/^\w+$/')
  * @param int    $length
  * @return bool
  */
-function validate_max_length($value, $length)
+function validate_max_length($value, $length = 0)
 {
     return strlen((string) $value) <= (int) $length;
 }
@@ -48,7 +48,7 @@ function validate_max_length($value, $length)
  * @param array $allowed массив разрешённых значений
  * @return bool
  */
-function validate_in_array($value, array $allowed)
+function validate_in_array($value, array $allowed = [])
 {
     return in_array($value, $allowed);
 }
@@ -62,6 +62,23 @@ function validate_in_array($value, array $allowed)
 function validate_is_int($value)
 {
     return is_int($value);
+}
+
+/**
+ * Значение лежит в диапазоне [$from, $to).
+ *
+ * @param int|float $value
+ * @param int|float $from
+ * @param int|float $to
+ * @return bool
+ */
+function validate_range($value, $from = 0, $to = 0)
+{
+    if (!is_numeric($value)) {
+        return false;
+    }
+
+    return $from <= $value && $value < $to;
 }
 
 /**
@@ -135,6 +152,8 @@ function __validate_default_message($name)
         'required' => 'Поле должно быть не пусто',
         'regex' => 'Поле не соответствует формату',
         'max_length' => 'Поле слишком длинное',
+        'is_int' => 'Поле должно содержать число',
+        'range' => 'Значение слишком большое или слишком маленькое',
     ];
     static $_default = 'Недопустимое значение поля';
 

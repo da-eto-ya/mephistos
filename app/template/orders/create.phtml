@@ -1,4 +1,7 @@
 <?php
+/** @var array $order ['price' => цена, 'description' => описание] */
+/** @var array $errors ['price'? => array, 'description'? => array] */
+/** @var array $createdOrder */
 ?><!doctype html>
 <html lang="ru">
 <?= template_render('_elements/head', ['heading' => 'Добавить заказ']); ?>
@@ -8,28 +11,42 @@
 <main>
     <div class="container">
         <div class="row center form-container">
-            <form class="col s12 m10 offset-m1 card hoverable order-form">
+            <form action="<?= _e(router_get_path('orders', 'create')) ?>" method="post"
+                  class="col s12 m10 offset-m1 card hoverable order-form">
                 <div class="form-inner">
-
                     <h3>Добавить заказ</h3>
 
                     <div class="row">
                         <div class="input-field col s12">
                             <i class="material-icons prefix mdi-editor-attach-money"></i>
-                            <input id="price" name="price" type="number" min="1" max="10000" step="0.01"
-                                   class="validate" required>
+                            <input id="price" name="price"
+                                   value="<?= _e($order['price']) ?>"
+                                   type="number" min="1" max="10000" step="0.01"
+                                   class="validate"
+                                   required>
                             <label for="price"
                                    data-error="Введите сумму от 1 до 10000 с точностью до центов">Стоимость</label>
                         </div>
                     </div>
+
+                    <?php if (!empty($errors['price'])) : ?>
+                        <?= template_render('_elements/error_row', ['errors' => $errors['price']]) ?>
+                    <?php endif; ?>
+
                     <div class="row">
                         <div class="input-field col s12">
                             <i class="material-icons prefix mdi-editor-insert-comment"></i>
-                            <textarea id="description" name="description" class="materialize-textarea validate"
-                                      required maxlength="665"></textarea>
+                            <textarea id="description" name="description"
+                                      class="materialize-textarea validate"
+                                      maxlength="665"
+                                      required><?= _e($order['description']) ?></textarea>
                             <label for="description">Описание</label>
                         </div>
                     </div>
+
+                    <?php if (!empty($errors['description'])) : ?>
+                        <?= template_render('_elements/error_row', ['errors' => $errors['description']]) ?>
+                    <?php endif; ?>
 
                     <div class="row">
                         <div class="input-field col s12">
@@ -42,6 +59,12 @@
                 </div>
             </form>
         </div>
+
+        <?php if (!empty($createdOrder)) : ?>
+            <div class="row center">
+                <h4 class="col s12">Заказ добавлен</h4>
+            </div>
+        <?php endif; ?>
     </div>
 </main>
 

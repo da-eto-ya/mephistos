@@ -35,9 +35,45 @@ function controller_orders_create()
         return;
     }
 
-    // TODO: order form
+    // order form
+    $order = [
+        'price' => '',
+        'description' => '',
+    ];
+    $errors = [];
+    $createdOrder = [];
 
-    response_send(template_render('orders/create'));
+    if (request_is_post()) {
+        $order['price'] = _p('price', 0, APP_PARAM_FLOAT);
+        $order['description'] = _p('description', '');
+
+        $errors = validate_fields($order, [
+            'price' => [
+                ['required', 'msg' => 'Введите стоимость'],
+                ['regex', 'params' => '/^[0-9]+(?:[,\.][0-9]{2})?$/', 'msg' => 'Введите сумму в формате «123.45»'],
+                ['range', 'params' => [1, 10001], 'msg' => 'Введите сумму от 1 до 10000'],
+            ],
+            'description' => [
+                ['required', 'msg' => 'Введите описание'],
+                ['max_length', 'params' => 665, 'Длина описания не должна превышать 665 символов'],
+            ],
+        ]);
+
+        if (empty($errors)) {
+            // TODO: save to db
+            $createdOrder = $order;
+            $order = [
+                'price' => '',
+                'description' => '',
+            ];
+        }
+    }
+
+    response_send(template_render('orders/create', [
+        'order' => $order,
+        'errors' => $errors,
+        'createdOrder' => $createdOrder,
+    ]));
 }
 
 /**

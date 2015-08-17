@@ -15,10 +15,8 @@
                 <div class="form-inner">
                     <h3>Войти</h3>
 
-                    <?php if ($error): ?>
-                        <div class="row form-error-row">
-                            <div class="col s12 red-text"><?= _e($error) ?></div>
-                        </div>
+                    <?php if (!empty($error)) : ?>
+                        <?= template_render('_elements/error_row', ['errors' => [$error]]) ?>
                     <?php endif; ?>
 
                     <div class="row">

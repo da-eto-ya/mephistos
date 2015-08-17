@@ -1,0 +1,7 @@
+<?php if (!empty($errors)) : ?>
+    <div class="row form-error-row">
+        <?php foreach ($errors as $error) : ?>
+            <div class="col s12 red-text"><?= _e($error) ?></div>
+        <?php endforeach; ?>
+    </div>
+<?php endif; ?>

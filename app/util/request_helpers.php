@@ -65,7 +65,7 @@ function _req($name, $default = null, $type = APP_PARAM_TRIM, $source = APP_PARA
             break;
 
         case APP_PARAM_FLOAT:
-            $value = (float) $value;
+            $value = (float) str_replace(',', '.', $value);
             break;
 
         case APP_PARAM_TRIM:
