@@ -18,9 +18,9 @@ function controller_login()
     $error = '';
 
     // первичная аутентификация и, при успехе, переход на другой URL
-    $token = auth_receive_session_data();
+    $sessionUser = auth_get_current_user();
 
-    if ($token) {
+    if ($sessionUser) {
         // TODO: выбирать, куда посылать пользователя
         response_redirect(router_get_path('orders', 'list'));
     }

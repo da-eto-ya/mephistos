@@ -60,7 +60,7 @@ function response_redirect($url)
  * @param bool|true $httpOnly
  * @return bool
  */
-function response_set_cookie(
+function response_write_cookie(
     $name,
     $value = '',
     $expire = 0,

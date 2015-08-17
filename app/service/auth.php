@@ -130,7 +130,7 @@ function auth_identify_session($token)
 
     $config = auth_config();
 
-    return response_set_cookie(
+    return response_write_cookie(
         $config['cookie'],
         $token,
         time() + $config['expire'],
@@ -165,31 +165,40 @@ function auth_stop_authorized_session()
 /**
  * Получить данные сессии аутентификации.
  *
- * @return mixed|bool
+ * @param bool $force форсировать получение данных, не использовать кеш
+ * @return bool|mixed
  */
-function auth_receive_session_data()
+function auth_get_session_data($force = false)
 {
-    $config = auth_config();
-    $token = request_read_cookie($config['cookie']);
+    static $_payload = null;
 
-    if (!$token) {
-        return false;
+    if (null === $_payload || $force) {
+        $config = auth_config();
+        $token = request_read_cookie($config['cookie']);
+
+        if (!$token) {
+            $_payload = false;
+
+            return false;
+        }
+
+        $payloadResult = jwt_decode($token, $config['secret_key'], [$config['token_algo']]);
+
+        if (!$payloadResult['success']) {
+            $_payload = false;
+
+            // TODO: log
+            return false;
+        }
+
+        $_payload = $payloadResult['payload'];
     }
 
-    $payloadResult = jwt_decode($token, $config['secret_key'], [$config['token_algo']]);
-
-    if (!$payloadResult['success']) {
-        // TODO: log
-        return false;
+    if ($_payload && isset($_payload['purpose']) && $_payload['purpose'] === 'session') {
+        return $_payload;
     }
 
-    $payload = $payloadResult['payload'];
-
-    if (!is_int($payload['sub']) || !isset($payload['purpose']) || $payload['purpose'] !== 'session') {
-        return false;
-    }
-
-    return $payload;
+    return false;
 }
 
 /**
@@ -205,7 +214,7 @@ function auth_get_current_user($sessionData = null, $force = false)
 
     if (null === $_user || $force) {
         if (null === $sessionData) {
-            $sessionData = auth_receive_session_data();
+            $sessionData = auth_get_session_data($force);
         }
 
         if ($sessionData && !empty($sessionData['sub']) && is_int($sessionData['sub'])) {
