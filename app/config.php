@@ -14,6 +14,7 @@ return [
         // роуты в виде 'префикс' => 'контроллер'
         'routes' => [
             'login',
+            'logout',
             'orders',
             '' => 'main',
         ],

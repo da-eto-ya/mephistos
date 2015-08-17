@@ -1,0 +1,34 @@
+<?php
+/** @var array $credentials форма логина */
+/** @var string $error сообщение при логине */
+?><!doctype html>
+<html lang="ru">
+<?= template_render('_elements/head', ['heading' => 'Login']); ?>
+<body>
+<?= template_render('_elements/header'); ?>
+
+<main>
+    <div class="container">
+        <div class="row center form-container">
+            <form action="<?= router_get_path('logout') ?>" method="post"
+                  class="col s12 m8 offset-m2 l6 offset-l3 card hoverable logout-form">
+                <div class="form-inner">
+                    <h3>Действительно выйти?</h3>
+
+                    <div class="row">
+                        <div class="input-field col s12">
+                            <button type="submit"
+                                    class="col s12 waves-effect waves-light btn-large deep-orange darken-4">
+                                Выйти
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
+
+<?= template_render('_elements/footer'); ?>
+</body>
+</html>

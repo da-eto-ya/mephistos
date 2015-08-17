@@ -4,7 +4,7 @@
  */
 
 require_once __DIR__ . '/../require.php';
-require_services('request', 'response', 'template', 'auth', 'validate', 'security');
+require_services('request', 'response', 'template', 'auth', 'validate', 'security', 'router');
 
 /**
  * Логин.
@@ -17,7 +17,7 @@ function controller_login()
     ];
     $error = '';
 
-    // TODO: здесь ещё нужна первичная аутентификация и, при успехе, переход на другой URL
+    // первичная аутентификация и, при успехе, переход на другой URL
     $token = auth_receive_session_data();
 
     if ($token) {

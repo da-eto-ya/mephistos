@@ -57,7 +57,7 @@ function auth_find_user($credentials)
         return false;
     }
 
-    $user = repo_users_get_by_username($credentials['username']);
+    $user = repo_users_get_one_by_username($credentials['username']);
 
     if (!$user || !security_password_verify($credentials['password'], $user['hash'])) {
         return false;
@@ -153,6 +153,16 @@ function auth_start_authorized_session($uid)
 }
 
 /**
+ * Остановить сессию клиента.
+ *
+ * @return bool
+ */
+function auth_stop_authorized_session()
+{
+    return response_remove_cookie(auth_config()['cookie']);
+}
+
+/**
  * Получить данные сессии аутентификации.
  *
  * @return mixed|bool
@@ -180,4 +190,28 @@ function auth_receive_session_data()
     }
 
     return $payload;
+}
+
+/**
+ * Получить модель текущего пользователя.
+ *
+ * @param null $sessionData данные сессии (результат auth_receive_session_data)
+ * @param bool $force форсировать получение и установку пользователя (не использовать кешированный результат)
+ * @return array|bool false, если пользователь не найден
+ */
+function auth_get_current_user($sessionData = null, $force = false)
+{
+    static $_user = null;
+
+    if (null === $_user || $force) {
+        if (null === $sessionData) {
+            $sessionData = auth_receive_session_data();
+        }
+
+        if ($sessionData && !empty($sessionData['sub']) && is_int($sessionData['sub'])) {
+            $_user = repo_users_get_one_by_id($sessionData['sub']);
+        }
+    }
+
+    return $_user;
 }

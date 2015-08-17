@@ -12,7 +12,7 @@ require_services('db');
  * @param int $uid
  * @return array|bool
  */
-function repo_users_get_by_id($uid)
+function repo_users_get_one_by_id($uid)
 {
     $uid = (int) $uid;
 
@@ -29,7 +29,7 @@ function repo_users_get_by_id($uid)
  * @param string $username
  * @return array|bool
  */
-function repo_users_get_by_username($username)
+function repo_users_get_one_by_username($username)
 {
     return db_get_one('users', 'SELECT * FROM `users` WHERE `username` = ? LIMIT 1', [(string) $username]);
 }

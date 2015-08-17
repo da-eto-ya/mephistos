@@ -74,3 +74,20 @@ function response_set_cookie(
 
     return setcookie($name, $value, $expire, $path, $domain, $secure, $httpOnly);
 }
+
+/**
+ * Удалить cookie с данным именем.
+ *
+ * @param string $name
+ * @param string $path
+ * @param null   $domain
+ * @return bool
+ */
+function response_remove_cookie($name, $path = '/', $domain = null)
+{
+    if (isset($_COOKIE[$name])) {
+        unset($_COOKIE[$name]);
+    }
+
+    return setcookie($name, '', time() - 3600, $path, $domain);
+}

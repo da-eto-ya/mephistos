@@ -54,7 +54,7 @@ main {
   }
 }
 
-form.login-form {
+form.login-form, form.logout-form {
   label:after {
     width: 17rem;
   }
@@ -100,4 +100,35 @@ div.nav-balance {
     font-size: 1.4rem;
     margin: 0;
   }
+}
+
+// Кнопка выхода
+button.nav-logout {
+  display: block;
+  padding: 0 15px;
+  height: 56px;
+  line-height: 56px;
+  text-transform: none;
+  font-size: 1rem;
+  color: #fff;
+
+  &:focus {
+    border: none;
+    box-shadow: none;
+    outline: 0;
+    background-color: transparent;
+  }
+}
+
+@media only screen and (min-width: 601px) {
+  button.nav-logout {
+    height: 64px;
+    line-height: 64px;
+  }
+}
+
+.side-nav button.nav-logout {
+  color: #343434;
+  width: 100%;
+  text-align: left;
 }
