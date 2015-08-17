@@ -18,10 +18,12 @@ function controller_login()
     $error = '';
 
     // первичная аутентификация и, при успехе, переход на другой URL
-    $sessionUser = auth_get_current_user();
+    $user = auth_get_current_user();
 
-    if ($sessionUser) {
-        response_redirect(auth_get_default_url_for_user($sessionUser));
+    if ($user) {
+        response_redirect(auth_get_default_url_for_user($user));
+
+        return;
     }
 
     if (request_is_post()) {

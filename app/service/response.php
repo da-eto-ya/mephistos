@@ -29,13 +29,23 @@ function response_json($result, $code = 200)
 }
 
 /**
- * Ответ 404.
+ * Ответ 404 (Not Found).
  *
  * @param string $message
  */
-function response_not_found($message = 'Not found')
+function response_not_found($message = 'Not Found')
 {
     response_send($message, 404);
+}
+
+/**
+ * Ответ 403 (Forbidden).
+ *
+ * @param string $message
+ */
+function response_forbidden($message = 'Forbidden')
+{
+    response_send($message, 403);
 }
 
 /**

@@ -245,3 +245,19 @@ function auth_get_default_url_for_user(array $user = null)
 
     return isset($urls[$user['role']]) ? $urls[$user['role']] : '';
 }
+
+/**
+ * Разрешён ли авторизованный доступ к ресурсу.
+ *
+ * @param array $user модель пользователя
+ * @param array $roles список разрешённых ролей
+ * @return bool
+ */
+function auth_is_authorized_access_allowed(array $user = null, array $roles = [])
+{
+    if (!$user || !isset($user['role'])) {
+        return false;
+    }
+
+    return in_array($user['role'], $roles);
+}
