@@ -18,11 +18,22 @@ $user = auth_get_current_user();
                             </button>
                         </form>
                     </li>
-                    <li>
-                        <img src="/static/img/stub/faust-vrubel.jpg"
-                             alt="<?= _e($user['username']) ?>" title="<?= _e($user['username']) ?>"
-                             class="circle nav-avatar">
-                    </li>
+
+                    <?php if ($user['avatar']): ?>
+
+                        <li>
+                            <img src="<?= _e($user['avatar']) ?>"
+                                 alt="<?= _e($user['username']) ?>" title="<?= _e($user['username']) ?>"
+                                 class="circle nav-avatar">
+                        </li>
+
+                    <?php else : ?>
+
+                        <li>
+                            <span title="<?= _e($user['username']) ?>">(<?= _e($user['username']) ?>)</span>
+                        </li>
+
+                    <?php endif; ?>
                 </ul>
                 <ul class="right">
                     <li>
