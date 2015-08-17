@@ -59,7 +59,7 @@ function auth_find_user($credentials)
 
     $user = repo_users_get_one_by_username($credentials['username']);
 
-    if (!$user || !security_password_verify($credentials['password'], $user['hash'])) {
+    if (!$user || !security_password_verify($credentials['password'], $user['password_hash'])) {
         return false;
     }
 
@@ -75,7 +75,7 @@ function auth_find_user($credentials)
  */
 function auth_rehash_user_password($uid, $password)
 {
-    return repo_users_update_one($uid, ['hash' => security_password_hash($password)]);
+    return repo_users_update_one($uid, ['password_hash' => security_password_hash($password)]);
 }
 
 /**

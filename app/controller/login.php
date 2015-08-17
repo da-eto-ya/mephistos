@@ -45,7 +45,7 @@ function controller_login()
             $error = '';
 
             // если изменился алгоритм или параметры шифрования, то обновляем хэш
-            if (security_password_needs_rehash($user['hash'])) {
+            if (security_password_needs_rehash($user['password_hash'])) {
                 auth_rehash_user_password($user['id'], $credentials['password']);
             }
 

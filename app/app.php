@@ -4,6 +4,7 @@
  */
 
 require_once __DIR__ . '/require.php';
+require_modules('functions');
 require_services('db', 'log', 'router', 'request', 'response', 'template', 'security', 'auth');
 
 /**

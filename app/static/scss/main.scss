@@ -98,7 +98,30 @@ div.nav-balance {
 
   i {
     font-size: 1.4rem;
+    line-height: 56px;
+    height: 56px;
     margin: 0;
+  }
+}
+
+@media only screen and (min-width: 601px) {
+  div.nav-balance i {
+      line-height: 64px;
+      height: 64px;
+  }
+}
+
+@media only screen and (min-width: 992px) {
+  div.nav-balance i {
+    line-height: 60px;
+    height: 64px;
+  }
+}
+
+@media only screen and (min-width: 1200px) {
+  div.nav-balance i {
+    line-height: 62px;
+    height: 64px;
   }
 }
 
