@@ -73,6 +73,8 @@ function repo_users_insert_one(array $fields)
         return false;
     }
 
+    $fields['created'] = date('Y-m-d H:i:s');
+
     return db_insert_one_unsafe('users', $fields, __repo_users_allowed_fields(), __repo_users_required_fields());
 }
 
@@ -91,6 +93,7 @@ function __repo_users_allowed_fields()
         'balance' => true,
         'avatar' => true,
         'role' => true,
+        'created' => true,
     ];
 
     return $_allowedFields;
@@ -140,6 +143,9 @@ function repo_users_validate_fields(array $fields)
         'role' => [
             ['is_int'],
             ['in_array', 'params' => [[APP_ROLE_EXECUTOR, APP_ROLE_CUSTOMER]]],
+        ],
+        'created' => [
+            ['mysql_datetime']
         ],
     ], false);
 }
