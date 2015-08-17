@@ -1,4 +1,6 @@
-<!doctype html>
+<?php
+$user = auth_get_current_user();
+?><!doctype html>
 <html lang="ru">
 <?= template_render('_elements/head', ['heading' => '']); ?>
 <body>
@@ -16,8 +18,20 @@
                     действительно исполнили ваш заказ</h5>
             </div>
             <div class="row center">
-                <a href="<?= router_get_path('login'); ?>" title="Войти на сайт"
-                   class="btn-large waves-effect waves-light deep-orange">Присоединиться</a>
+
+                <?php if ($user) : ?>
+
+                    <!-- TODO: check role and select url -->
+                    <a href="<?= router_get_path('orders', 'list'); ?>" title="Выполнить заказы"
+                       class="btn-large waves-effect waves-light deep-orange">Продолжить работу</a>
+
+                <?php else : ?>
+
+                    <a href="<?= router_get_path('login'); ?>" title="Войти на сайт"
+                       class="btn-large waves-effect waves-light deep-orange">Присоединиться</a>
+
+                <?php endif; ?>
+
             </div>
         </div>
     </div>
