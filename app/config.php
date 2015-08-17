@@ -55,4 +55,10 @@ return [
     'security' => [
         'cost' => 11,
     ],
+    // компонент аутентификации
+    'auth' => [
+        'secret_key' => getenv('OPENSHIFT_SECRET_TOKEN') ?: hash('sha256', 'oh my secret key!'),
+        'domain' => getenv('OPENSHIFT_APP_NAME') ? '.mephistos.da-eto.info' : '.mephistos.loc',
+        'expire' => 86400, // 1d
+    ],
 ];

@@ -7,7 +7,7 @@
  * Посылаем ответ клиенту.
  *
  * @param string $message
- * @param int $code
+ * @param int    $code
  */
 function response_send($message = '', $code = 200)
 {
@@ -19,7 +19,7 @@ function response_send($message = '', $code = 200)
  * Посылаем ответ в виде json.
  *
  * @param mixed $result сырой массив/объект для ответа
- * @param int $code
+ * @param int   $code
  */
 function response_json($result, $code = 200)
 {
@@ -46,4 +46,31 @@ function response_not_found($message = 'Not found')
 function response_redirect($url)
 {
     header("Location: {$url}");
+}
+
+/**
+ * Установка cookie.
+ *
+ * @param string    $name
+ * @param string    $value
+ * @param int       $expire
+ * @param string    $path
+ * @param null      $domain
+ * @param null      $secure
+ * @param bool|true $httpOnly
+ * @return bool
+ */
+function response_set_cookie(
+    $name,
+    $value = '',
+    $expire = 0,
+    $path = '/',
+    $domain = null,
+    $secure = null,
+    $httpOnly = null
+) {
+    $name = (string) $name;
+    $value = (string) $value;
+
+    return setcookie($name, $value, $expire, $path, $domain, $secure, $httpOnly);
 }

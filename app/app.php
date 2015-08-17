@@ -4,7 +4,7 @@
  */
 
 require_once __DIR__ . '/require.php';
-require_services('db', 'log', 'router', 'request', 'response', 'template', 'security');
+require_services('db', 'log', 'router', 'request', 'response', 'template', 'security', 'auth');
 
 /**
  * Запуск приложения.
@@ -20,6 +20,7 @@ function app_run(array $config)
         'db' => 'db_config',
         'template' => 'template_config',
         'security' => 'security_config',
+        'auth' => 'auth_config',
     ];
 
     foreach ($configurableModules as $key => $callable) {

@@ -64,3 +64,14 @@ function request_has_method($method, array $request = null)
 
     return isset($request['method']) && $method === $request['method'];
 }
+
+/**
+ * Читает cookie.
+ *
+ * @param string $name
+ * @return string|bool
+ */
+function request_read_cookie($name)
+{
+    return isset($_COOKIE[$name]) ? $_COOKIE[$name] : false;
+}

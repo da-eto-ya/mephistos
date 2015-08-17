@@ -18,6 +18,12 @@ function controller_login()
     $error = '';
 
     // TODO: здесь ещё нужна первичная аутентификация и, при успехе, переход на другой URL
+    $token = auth_receive_session_data();
+
+    if ($token) {
+        // TODO: выбирать, куда посылать пользователя
+        response_redirect(router_get_path('orders', 'list'));
+    }
 
     if (request_is_post()) {
         $error = "Неверный логин или пароль";
@@ -43,9 +49,10 @@ function controller_login()
                 auth_rehash_user_password($user['id'], $credentials['password']);
             }
 
-            // TODO: установка кук
-            auth_set_access_token($user['id']);
-            response_redirect('/list.html');
+            auth_start_authorized_session($user['id']);
+            // TODO: выбирать, куда посылать пользователя
+            response_redirect(router_get_path('orders', 'list'));
+
             return;
         }
     }
