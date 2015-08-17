@@ -440,6 +440,7 @@ function db_inserted_id_raw($connection)
     }
 
     /** @var mysqli $connection */
+
     return mysqli_insert_id($connection);
 }
 
@@ -478,4 +479,114 @@ function db_get_one($table, $query, array $params = [])
     db_free_result($result);
 
     return $row ?: false;
+}
+
+/**
+ * Запрос и получение одной строки в виде ассоциативного массива по уникальному полю.
+ * Небезопасный метод, полагается на правильно переданные имена таблицы и полей.
+ *
+ * @param string $table
+ * @param string $idField
+ * @param mixed  $idValue
+ * @return array|bool false в случае пустого результата или ошибки
+ */
+function db_get_one_unsafe($table, $idField, $idValue)
+{
+    $result = db_query($table, "SELECT * FROM `{$table}` WHERE `{$idField}` = ? LIMIT 1", [$idValue]);
+
+    if (false === $result) {
+        return false;
+    }
+
+    $row = db_fetch_assoc($result);
+    db_free_result($result);
+
+    return $row ?: false;
+}
+
+/**
+ * Обновление одной строки.
+ * Небезопасный метод, полагается на правильно переданные имена таблицы и полей.
+ *
+ * @param string $table
+ * @param array  $fields поля для обновления [имя => значение]
+ * @param string $idField имя идентификатора
+ * @param mixed  $idValue значение идентификатора
+ * @param array  $allowedFields разрешённые для обновления поля [имя => true]
+ * @return bool|int
+ */
+function db_update_one_unsafe($table, array $fields, $idField, $idValue, array $allowedFields = [])
+{
+    $setFields = [];
+    $params = [];
+
+    foreach ($fields as $field => $idValue) {
+        if (!empty($allowedFields[$field])) {
+            // TODO: quote backticks?
+            $setFields[] = "`$field` = ?";
+            $params[] = $idValue;
+        } else {
+            break;
+        }
+    }
+
+    // нечего обновлять или не все поля удалось найти в разрешённых
+    if (!count($setFields) || count($fields) !== count($setFields)) {
+        return false;
+    }
+
+    $set = join(', ', $setFields);
+    $params[] = $idValue;
+
+    return db_exec($table, "UPDATE `{$table}` SET {$set} WHERE `{$idField}` = ? LIMIT 1", $params);
+}
+
+/**
+ * Добавление одной строки.
+ * Небезопасный метод, полагается на правильно переданные имена таблицы и полей.
+ *
+ * @param string $table
+ * @param array  $fields значения полей модели [имя => значение]
+ * @param array  $allowedFields хэш разрешённых полей [имя => true]
+ * @param array  $requiredFields хэш обязательных полей [имя => true]
+ * @return bool|int
+ */
+function db_insert_one_unsafe($table, array $fields, array $allowedFields, array $requiredFields)
+{
+    $setFields = [];
+    $required = [];
+    $params = [];
+
+    foreach ($fields as $field => $value) {
+        if (!empty($allowedFields[$field])) {
+            // TODO: quote backticks?
+            $setFields[] = "`$field`";
+            $required[$field] = true;
+            $params[] = $value;
+        } else {
+            break;
+        }
+    }
+
+    // не все поля удалось найти в разрешённых
+    if (count($fields) !== count($setFields)) {
+        return false;
+    }
+
+    // проверяем, что устанавливаются все необходимые поля
+    foreach (array_keys($requiredFields) as $field) {
+        if (!isset($required[$field])) {
+            return false;
+        }
+    }
+
+    $names = join(', ', $setFields);
+    $placeholders = join(', ', array_fill(0, count($params), '?'));
+    $affected = db_exec($table, "INSERT INTO `{$table}` ({$names}) VALUES ({$placeholders})", $params);
+
+    if ($affected != 1) {
+        return false;
+    }
+
+    return db_inserted_id($table);
 }

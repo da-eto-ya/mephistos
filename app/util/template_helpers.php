@@ -3,9 +3,6 @@
  * Хелперы для шаблонизатора.
  */
 
-require_once __DIR__ . '/../require.php';
-require_modules('functions');
-
 /**
  * Экранируем выходные значения.
  *

@@ -4,8 +4,8 @@
  */
 
 require_once __DIR__ . '/../require.php';
-require_services('security', 'jwt', 'request', 'response');
-require_modules('repo/users');
+require_services('security', 'jwt', 'request', 'response', 'router');
+require_repos('users');
 
 /**
  * Устанавливает или возвращает конфигурацию компонента аутентификации.
@@ -223,4 +223,25 @@ function auth_get_current_user($sessionData = null, $force = false)
     }
 
     return $_user;
+}
+
+/**
+ * Возвращает URL по умолчанию для пользователя.
+ *
+ * @param array|null $user
+ * @return string
+ */
+function auth_get_default_url_for_user(array $user = null)
+{
+    if (!$user || !isset($user['role'])) {
+        return '/';
+    }
+
+    // TODO: move to config level
+    $urls = [
+        APP_ROLE_EXECUTOR => router_get_path('orders', 'list'),
+        APP_ROLE_CUSTOMER => router_get_path('orders', 'create'),
+    ];
+
+    return isset($urls[$user['role']]) ? $urls[$user['role']] : '';
 }

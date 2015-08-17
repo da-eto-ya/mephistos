@@ -7,7 +7,7 @@ require_once __DIR__ . '/../require.php';
 require_services('log');
 
 // считаем, что все, кто использует template, собираются использовать его хелперы
-require_modules('util/template_helpers');
+require_utils('template_helpers');
 
 /**
  * Устанавливает или возвращает конфигурацию шаблонизатора.

@@ -32,13 +32,36 @@ function validate_regex($value, $regex = '/^\w+$/')
 /**
  * Длина значения не более указанной.
  *
- * @param $value
- * @param $length
+ * @param string $value
+ * @param int    $length
  * @return bool
  */
 function validate_max_length($value, $length)
 {
-    return strlen((string) $value) <= $length;
+    return strlen((string) $value) <= (int) $length;
+}
+
+/**
+ * Значение есть в массиве.
+ *
+ * @param mixed $value
+ * @param array $allowed массив разрешённых значений
+ * @return bool
+ */
+function validate_in_array($value, array $allowed)
+{
+    return in_array($value, $allowed);
+}
+
+/**
+ * Значение имеет целый тип.
+ *
+ * @param mixed $value
+ * @return bool
+ */
+function validate_is_int($value)
+{
+    return is_int($value);
 }
 
 /**
@@ -46,16 +69,19 @@ function validate_max_length($value, $length)
  *
  * @param array $form
  * @param array $rules
+ * @param bool  $logUnset логировать поля, которые есть в правилах и нет в значениях
  * @return array массив ошибок
  */
-function validate_fields(array $form, array $rules)
+function validate_fields(array $form, array $rules, $logUnset = true)
 {
     $errors = [];
 
     foreach ($rules as $field => $rule) {
         // в форме должно быть соответствующее поле
         if (!isset($form[$field])) {
-            log_warning("Can't find form field on validation", [$rules, $field]);
+            if ($logUnset) {
+                log_warning("Can't find form field on validation", [$rules, $field]);
+            }
             continue;
         }
 

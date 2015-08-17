@@ -12,7 +12,7 @@ $user = auth_get_current_user();
 
                 <ul class="right hide-on-med-and-down">
                     <li>
-                        <form action="<?= router_get_path('logout') ?>" method="post">
+                        <form action="<?= _e(router_get_path('logout')) ?>" method="post">
                             <button type="submit" class="btn-flat nav-logout" title="Выйти из системы">
                                 <i class="material-icons mdi-action-perm-identity left"></i>Выйти
                             </button>
@@ -46,7 +46,7 @@ $user = auth_get_current_user();
 
                 <ul id="nav-mobile" class="side-nav">
                     <li>
-                        <form action="<?= router_get_path('logout') ?>" method="post">
+                        <form action="<?= _e(router_get_path('logout')) ?>" method="post">
                             <button type="submit" class="btn-flat nav-logout" title="Выйти из системы">
                                 <i class="material-icons mdi-action-perm-identity left"></i>Выйти
                             </button>
@@ -58,14 +58,14 @@ $user = auth_get_current_user();
 
                 <ul class="right hide-on-med-and-down">
                     <li>
-                        <a href="<?= router_get_path('login'); ?>" title="Войти в систему"><i
+                        <a href="<?= _e(router_get_path('login')) ?>" title="Войти в систему"><i
                                 class="material-icons mdi-action-perm-identity left"></i>Вход</a>
                     </li>
                 </ul>
 
                 <ul id="nav-mobile" class="side-nav">
                     <li>
-                        <a href="<?= router_get_path('login'); ?>" title="Войти в систему"><i
+                        <a href="<?= _e(router_get_path('login')) ?>" title="Войти в систему"><i
                                 class="material-icons mdi-action-perm-identity left"></i>Вход</a>
                     </li>
                 </ul>

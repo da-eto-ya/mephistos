@@ -22,12 +22,12 @@ $user = auth_get_current_user();
                 <?php if ($user) : ?>
 
                     <!-- TODO: check role and select url -->
-                    <a href="<?= router_get_path('orders', 'list'); ?>" title="Выполнить заказы"
+                    <a href="<?= _e(auth_get_default_url_for_user($user)) ?>" title="Продолжить работу"
                        class="btn-large waves-effect waves-light deep-orange">Продолжить работу</a>
 
                 <?php else : ?>
 
-                    <a href="<?= router_get_path('login'); ?>" title="Войти на сайт"
+                    <a href="<?= _e(router_get_path('login')) ?>" title="Войти на сайт"
                        class="btn-large waves-effect waves-light deep-orange">Присоединиться</a>
 
                 <?php endif; ?>

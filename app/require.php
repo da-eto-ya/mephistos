@@ -60,3 +60,23 @@ function require_services(...$services)
 {
     require_prefixed('service/', ...$services);
 }
+
+/**
+ * Подключение утилит.
+ *
+ * @param array $utils
+ */
+function require_utils(...$utils)
+{
+    require_prefixed('util/', ...$utils);
+}
+
+/**
+ * Подключение репозиториев.
+ *
+ * @param array $repos
+ */
+function require_repos(...$repos)
+{
+    require_prefixed('repo/', ...$repos);
+}

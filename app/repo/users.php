@@ -4,7 +4,12 @@
  */
 
 require_once __DIR__ . '/../require.php';
-require_services('db');
+require_services('db', 'validate');
+
+/** Исполнитель заказов */
+const APP_ROLE_EXECUTOR = 0;
+/** Заказчик */
+const APP_ROLE_CUSTOMER = 1;
 
 /**
  * Получить пользователя по ID.
@@ -20,7 +25,7 @@ function repo_users_get_one_by_id($uid)
         return false;
     }
 
-    return db_get_one('users', 'SELECT * FROM `users` WHERE `id` = ? LIMIT 1', [$uid]);
+    return db_get_one_unsafe('users', 'id', $uid);
 }
 
 /**
@@ -31,49 +36,29 @@ function repo_users_get_one_by_id($uid)
  */
 function repo_users_get_one_by_username($username)
 {
-    return db_get_one('users', 'SELECT * FROM `users` WHERE `username` = ? LIMIT 1', [(string) $username]);
+    return db_get_one_unsafe('users', 'username', (string) $username);
 }
 
 /**
  * Обновить данные одного пользователя.
  *
- * @param int $uid
+ * @param int   $uid
  * @param array $fields
  * @return bool|int
  */
 function repo_users_update_one($uid, array $fields)
 {
-    // TODO: move common logic to db
-    static $_allowedFields = ['username' => true, 'hash' => true];
-
     $uid = (int) $uid;
 
     if (!$uid || !$fields) {
         return false;
     }
 
-    $setFields = [];
-    $params = [];
-
-    foreach ($fields as $field => $value) {
-        if (!empty($_allowedFields[$field])) {
-            // TODO: quote backticks?
-            $setFields[] = "`$field` = ?";
-            $params[] = $value;
-        } else {
-            break;
-        }
-    }
-
-    // не все поля удалось найти в разрешённых
-    if (count($fields) !== count($setFields)) {
+    if (!empty(repo_users_validate_fields($fields))) {
         return false;
     }
 
-    $set = join(', ', $setFields);
-    $params[] = $uid;
-
-    return db_exec('users', "UPDATE `users` SET {$set} WHERE `id` = ? LIMIT 1", $params);
+    return db_update_one_unsafe('users', $fields, 'id', $uid, __repo_users_allowed_fields());
 }
 
 /**
@@ -84,44 +69,77 @@ function repo_users_update_one($uid, array $fields)
  */
 function repo_users_insert_one(array $fields)
 {
-    // TODO: move common logic to db + check values?
-    static $_allowedFields = ['username' => true, 'hash' => true];
-    static $_requiredFields = ['username' => true, 'hash' => true];
-
-    $setFields = [];
-    $required = [];
-    $params = [];
-
-    foreach ($fields as $field => $value) {
-        if (!empty($_allowedFields[$field])) {
-            // TODO: quote backticks?
-            $setFields[] = "`$field`";
-            $required[$field] = true;
-            $params[] = $value;
-        } else {
-            break;
-        }
-    }
-
-    // не все поля удалось найти в разрешённых
-    if (count($fields) !== count($setFields)) {
+    if (!empty(repo_users_validate_fields($fields))) {
         return false;
     }
 
-    // проверяем, что устанавливаются все необходимые поля
-    foreach (array_keys($_requiredFields) as $field) {
-        if (!isset($required[$field])) {
-            return false;
-        }
-    }
+    return db_insert_one_unsafe('users', $fields, __repo_users_allowed_fields(), __repo_users_required_fields());
+}
 
-    $names = join(', ', $setFields);
-    $placeholders = join(', ', array_fill(0, count($params), '?'));
-    $affected = db_exec('users', "INSERT INTO `users` ({$names}) VALUES ({$placeholders})", $params);
+/**
+ * Хэш разрешённых для вставки/изменения полей.
+ *
+ * @return array
+ *
+ * @internal
+ */
+function __repo_users_allowed_fields()
+{
+    static $_allowedFields = [
+        'username' => true,
+        'password_hash' => true,
+        'balance' => true,
+        'avatar' => true,
+        'role' => true,
+    ];
 
-    if ($affected != 1) {
-        return false;
-    }
+    return $_allowedFields;
+}
 
-    return db_inserted_id('users');
+/**
+ * Хэш необходимых для вставки полей.
+ *
+ * @return array
+ *
+ * @internal
+ */
+function __repo_users_required_fields()
+{
+    static $_requiredFields = [
+        'username' => true,
+        'password_hash' => true,
+    ];
+
+    return $_requiredFields;
+}
+
+/**
+ * Валидация полей перед добавлением/изменением.
+ *
+ * @param array $fields
+ * @return array массив ошибок
+ */
+function repo_users_validate_fields(array $fields)
+{
+    return validate_fields($fields, [
+        'username' => [
+            ['required'],
+            ['max_length', 'params' => 255],
+            ['regex', 'params' => '/^[a-zA-Z][-_a-zA-Z0-9]*$/'],
+        ],
+        'password_hash' => [
+            ['required'],
+            ['max_length', 'params' => 255],
+        ],
+        'balance' => [
+            ['is_int'],
+        ],
+        'avatar' => [
+            ['max_length', 'params' => 255],
+        ],
+        'role' => [
+            ['is_int'],
+            ['in_array', 'params' => [[APP_ROLE_EXECUTOR, APP_ROLE_CUSTOMER]]],
+        ],
+    ], false);
 }

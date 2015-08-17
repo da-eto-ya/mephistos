@@ -21,8 +21,7 @@ function controller_login()
     $sessionUser = auth_get_current_user();
 
     if ($sessionUser) {
-        // TODO: выбирать, куда посылать пользователя
-        response_redirect(router_get_path('orders', 'list'));
+        response_redirect(auth_get_default_url_for_user($sessionUser));
     }
 
     if (request_is_post()) {
@@ -50,8 +49,7 @@ function controller_login()
             }
 
             auth_start_authorized_session($user['id']);
-            // TODO: выбирать, куда посылать пользователя
-            response_redirect(router_get_path('orders', 'list'));
+            response_redirect(auth_get_default_url_for_user($user));
 
             return;
         }

@@ -6,7 +6,7 @@
 require_once __DIR__ . '/../require.php';
 
 // считаем, что все, кто использует request, собираются использовать его хелперы
-require_modules('util/request_helpers');
+require_utils('request_helpers');
 
 /**
  * Получить параметры текущего запроса.

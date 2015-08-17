@@ -56,6 +56,7 @@ return [
     'security' => [
         'cost' => 11,
     ],
+    // TODO: возможно, стоит перенести часть конфигов auth в security или слить их
     // компонент аутентификации
     'auth' => [
         'secret_key' => getenv('OPENSHIFT_SECRET_TOKEN') ?: hash('sha256', 'oh my secret key!'),
