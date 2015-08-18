@@ -29,6 +29,16 @@ function response_json($result, $code = 200)
 }
 
 /**
+ * Ответ 403 (Forbidden).
+ *
+ * @param string $message
+ */
+function response_forbidden($message = 'Forbidden')
+{
+    response_send($message, 403);
+}
+
+/**
  * Ответ 404 (Not Found).
  *
  * @param string $message
@@ -39,13 +49,18 @@ function response_not_found($message = 'Not Found')
 }
 
 /**
- * Ответ 403 (Forbidden).
+ * Ответ 405 (Method Not Allowed).
  *
+ * @param string $allow имя метода, который разрешается
  * @param string $message
  */
-function response_forbidden($message = 'Forbidden')
+function response_change_method($allow = 'POST', $message = 'Method Not Allowed')
 {
-    response_send($message, 403);
+    response_send($message, 405);
+
+    if ($allow) {
+        header('Allow: ' . $allow);
+    }
 }
 
 /**

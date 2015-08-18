@@ -73,6 +73,14 @@ ul.order-list {
 
     &:hover {
       background: #f5f5f5;
+
+      button {
+        background-color: #ff5722 !important;
+
+        i {
+          color: white !important;
+        }
+      }
     }
 
     .circle {
@@ -106,8 +114,8 @@ div.nav-balance {
 
 @media only screen and (min-width: 601px) {
   div.nav-balance i {
-      line-height: 64px;
-      height: 64px;
+    line-height: 64px;
+    height: 64px;
   }
 }
 

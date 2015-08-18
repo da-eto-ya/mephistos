@@ -43,6 +43,86 @@ function repo_users_get_by_ids(array $ids = [])
 }
 
 /**
+ * Увеличить баланс пользователя на указанную сумму.
+ *
+ * @param int $uid
+ * @param int $value сумма пополнения
+ * @return bool
+ */
+function repo_users_add_balance($uid, $value)
+{
+    $uid = (int) $uid;
+    $value = (int) $value;
+
+    if (!$uid || !$value) {
+        return false;
+    }
+
+    $affected = db_exec(
+        'users',
+        'UPDATE `users` SET `balance` = `balance` + ? WHERE `id` = ? LIMIT 1',
+        [$value, $uid]
+    );
+
+    return (1 === $affected);
+}
+
+/**
+ * Уменьшить баланс пользователя на указанную сумму.
+ *
+ * @param int $uid
+ * @param int $value сумма уменьшения
+ * @return bool
+ */
+function repo_users_sub_balance($uid, $value)
+{
+    $value = (int) $value;
+
+    return repo_users_add_balance($uid, -$value);
+}
+
+/**
+ * Получить исполнителя по ID.
+ *
+ * @param int $uid
+ * @return array|bool
+ */
+function repo_users_get_executor_by_id($uid)
+{
+    return repo_users_get_one_by_id_and_role($uid, APP_ROLE_EXECUTOR);
+}
+
+/**
+ * Получить заказчика по ID.
+ *
+ * @param int $uid
+ * @return array|bool
+ */
+function repo_users_get_customer_by_id($uid)
+{
+    return repo_users_get_one_by_id_and_role($uid, APP_ROLE_CUSTOMER);
+}
+
+/**
+ * Получить пользователя по ID и роли.
+ *
+ * @param $uid
+ * @param $role
+ * @return array|bool
+ */
+function repo_users_get_one_by_id_and_role($uid, $role)
+{
+    $user = repo_users_get_one_by_id($uid);
+
+    // TODO: можно выделить в запрос при необходимости
+    if ($user && $user['role'] == $role) {
+        return $user;
+    }
+
+    return false;
+}
+
+/**
  * Получить пользователя по ID.
  *
  * @param int $uid

@@ -95,6 +95,37 @@ function controller_orders_create()
 }
 
 /**
+ * Исполнение заказа.
+ */
+function controller_orders_execute()
+{
+    // авторизация
+    $user = auth_get_current_user();
+
+    if (__controller_orders_deny_access($user, APP_ROLE_EXECUTOR)) {
+        return;
+    }
+
+    // неверный http verb
+    if (!request_is_post()) {
+        response_change_method('POST');
+
+        return;
+    }
+
+    $id = _p('id', 0, APP_PARAM_INT);
+
+    if (!$id) {
+        return;
+    }
+
+    /*$success = */billing_order_execute($id, $user);
+    // TODO: message or json result
+
+    response_redirect(router_get_path('orders', 'list'));
+}
+
+/**
  * В случае отсутствия доступа посылает код перенаправления клиенту.
  *
  * @param array $user модель пользователя

@@ -4,7 +4,7 @@
  */
 
 require_once __DIR__ . '/../require.php';
-require_services('db', 'validate');
+require_services('db', 'validate', 'billing');
 
 /** Новый заказ */
 const APP_ORDER_STATUS_NEW = 0;
@@ -66,6 +66,94 @@ function repo_orders_create($price, $description, $customerId)
         'description' => (string) $description,
         'customer_id' => (int) $customerId,
     ]);
+}
+
+/**
+ * Исполнить ранее не исполненный заказ.
+ *
+ * @param int $id id заказа
+ * @param int $uid id пользователя
+ * @return bool|int
+ */
+function repo_orders_execute($id, $uid)
+{
+    return repo_orders_change_status($id, APP_ORDER_STATUS_EXECUTED, $uid);
+}
+
+/**
+ * Отменить исполнение ранее исполненного заказа.
+ *
+ * @param int $id заказа
+ * @return bool
+ */
+function repo_orders_cancel($id)
+{
+    return repo_orders_change_status($id, APP_ORDER_STATUS_NEW, null);
+}
+
+/**
+ * Изменить статус заказа.
+ *
+ * @param int      $id id заказа
+ * @param int      $status новый статус
+ * @param int|null $uid id исполнителя
+ * @return bool
+ */
+function repo_orders_change_status($id, $status, $uid = null)
+{
+    $id = (int) $id;
+
+    if (!$id) {
+        return false;
+    }
+
+    if (APP_ORDER_STATUS_NEW == $status) {
+        $oldStatus = APP_ORDER_STATUS_EXECUTED;
+    } else if (APP_ORDER_STATUS_EXECUTED == $status) {
+        $oldStatus = APP_ORDER_STATUS_NEW;
+    } else {
+        return false;
+    }
+
+    if (APP_ORDER_STATUS_EXECUTED == $status) {
+        $uid = (int) $uid;
+
+        if (!$uid) {
+            return false;
+        }
+    } else {
+        $uid = null;
+    }
+
+    $affected = db_exec(
+        'orders',
+        'UPDATE `orders` SET `status` = ?, `executor_id` = ? WHERE `id` = ? AND `status` = ? LIMIT 1',
+        [$status, $uid, $id, $oldStatus]
+    );
+
+    return (1 === $affected);
+
+}
+
+/**
+ * Получить один новый заказ.
+ *
+ * @param int $id
+ * @return array|bool
+ */
+function repo_orders_get_one_new($id)
+{
+    $id = (int) $id;
+
+    if (!$id) {
+        return false;
+    }
+
+    return db_get_one(
+        'orders',
+        'SELECT * FROM `orders` WHERE `id` = ? AND `status` = ?',
+        [$id, APP_ORDER_STATUS_NEW]
+    );
 }
 
 /**

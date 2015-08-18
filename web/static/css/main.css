@@ -65,6 +65,12 @@ ul.order-list .collection-item.avatar {
 ul.order-list .collection-item.avatar:hover {
   background: #f5f5f5;
 }
+ul.order-list .collection-item.avatar:hover button {
+  background-color: #ff5722 !important;
+}
+ul.order-list .collection-item.avatar:hover button i {
+  color: white !important;
+}
 ul.order-list .collection-item.avatar .circle {
   width: 48px;
   height: 48px;

@@ -22,7 +22,7 @@
                                 $customers[$order['customer_id']] :
                                 false;
                             ?>
-                            <li class="collection-item avatar">
+                            <li class="collection-item avatar order-item">
 
                                 <?php if (!empty($customer['avatar']) && isset($customer['username'])) : ?>
                                     <img src="<?= _e($customer['avatar']) ?>"
@@ -34,7 +34,8 @@
                                         &bullet;
                                         <span class="deep-orange-text"><?= _e(_money($order['price'])) ?></span>
                                         <nobr>&bullet;
-                                            <span class="blue-grey-text text-lighten-2"><?= _e($order['created']) ?></span>
+                                            <span
+                                                class="blue-grey-text text-lighten-2"><?= _e($order['created']) ?></span>
                                         </nobr>
                                     </span>
 
@@ -43,7 +44,8 @@
                                     <span class="title">
                                         <span class="deep-orange-text"><?= _e(_money($order['price'])) ?></span>
                                         <nobr>&bullet;
-                                            <span class="blue-grey-text text-lighten-2"><?= _e($order['created']) ?></span>
+                                            <span
+                                                class="blue-grey-text text-lighten-2"><?= _e($order['created']) ?></span>
                                         </nobr>
                                     </span>
 
@@ -52,9 +54,11 @@
                                 <p><?= _e($order['description']) ?></p>
 
                                 <div class="secondary-content">
-                                    <form action="">
-                                        <button type="submit" class="btn-floating waves-effect waves-light deep-orange">
-                                            <i class="material-icons mdi-action-done" title="Сделано!"></i></button>
+                                    <form action="<?= _e(router_get_path('orders', 'execute')) ?>" method="post">
+                                        <input type="hidden" name="id" value="<?= _e($order['id']) ?>">
+                                        <button type="submit"
+                                                class="btn-floating waves-effect waves-light transparent">
+                                            <i class="material-icons mdi-action-done grey-text text-darken-4" title="Сделать!"></i></button>
                                     </form>
                                 </div>
                             </li>

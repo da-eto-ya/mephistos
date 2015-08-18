@@ -233,16 +233,12 @@ function db_stmt_bind_params($statement, array $params = [])
     foreach ($params as $value) {
         if (is_int($value) || is_bool($value)) {
             $types[] = 'i';
+        } else if (is_float($value) || is_double($value)) {
+            $types[] = 'd';
+        } else if ('blob' == gettype($value)) {
+            $types[] = 'b';
         } else {
-            if (is_float($value) || is_double($value)) {
-                $types[] = 'd';
-            } else {
-                if ('blob' == gettype($value)) {
-                    $types[] = 'b';
-                } else {
-                    $types[] = 's';
-                }
-            }
+            $types[] = 's';
         }
     }
 
