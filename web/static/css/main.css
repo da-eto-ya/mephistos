@@ -140,3 +140,10 @@ button.nav-logout:focus {
   width: 100%;
   text-align: left;
 }
+
+.input-field label.invalid, .input-field label.invalid.active {
+  position: static;
+  font-size: 1rem;
+  color: red;
+  margin-left: 0;
+}

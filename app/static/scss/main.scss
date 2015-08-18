@@ -163,3 +163,12 @@ button.nav-logout {
   width: 100%;
   text-align: left;
 }
+
+.input-field {
+  label.invalid, label.invalid.active {
+    position: static;
+    font-size: 1rem;
+    color: red;
+    margin-left: 0;
+  }
+}

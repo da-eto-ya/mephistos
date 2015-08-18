@@ -1,0 +1,7 @@
+<?php if (!empty($errors)) : ?>
+    <label
+        <?php if (isset($for)) : ?>
+            for="<?= _e($for) ?>" id="<?= _e($for) ?>-error"
+        <?php endif; ?>
+        class="invalid"><?= join('<br>', array_map('_e', $errors)) ?></label>
+<?php endif; ?>

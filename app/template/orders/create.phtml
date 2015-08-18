@@ -13,6 +13,7 @@
     <div class="container">
         <div class="row center form-container">
             <form action="<?= _e(router_get_path('orders', 'create')) ?>" method="post"
+                  id="order-form"
                   class="col s12 m10 offset-m1 card hoverable order-form">
                 <div class="form-inner">
                     <h3>Добавить заказ</h3>
@@ -27,31 +28,35 @@
                             <input id="price" name="price"
                                    value="<?= _e($order['price']) ?>"
                                    type="number" min="1" max="10000" step="0.01"
-                                   class="validate"
+                                   class=""
                                    required>
+
+                            <?= template_render('_elements/errors_label', [
+                                'for' => 'price',
+                                'errors' => !empty($errors['price']) ? $errors['price'] : [],
+                            ]) ?>
+
                             <label for="price"
                                    data-error="Введите сумму от 1 до 10000 с точностью до центов">Стоимость</label>
                         </div>
                     </div>
 
-                    <?php if (!empty($errors['price'])) : ?>
-                        <?= template_render('_elements/error_row', ['errors' => $errors['price']]) ?>
-                    <?php endif; ?>
-
                     <div class="row">
                         <div class="input-field col s12">
                             <i class="material-icons prefix mdi-editor-insert-comment"></i>
                             <textarea id="description" name="description"
-                                      class="materialize-textarea validate"
+                                      class="materialize-textarea"
                                       maxlength="665"
                                       required><?= _e($order['description']) ?></textarea>
+
+                            <?= template_render('_elements/errors_label', [
+                                'for' => 'description',
+                                'errors' => !empty($errors['description']) ? $errors['description'] : [],
+                            ]) ?>
+
                             <label for="description">Описание</label>
                         </div>
                     </div>
-
-                    <?php if (!empty($errors['description'])) : ?>
-                        <?= template_render('_elements/error_row', ['errors' => $errors['description']]) ?>
-                    <?php endif; ?>
 
                     <div class="row">
                         <div class="input-field col s12">
