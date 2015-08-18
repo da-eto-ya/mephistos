@@ -4,12 +4,12 @@ $user = auth_get_current_user();
 <header>
     <nav class="deep-orange darken-4" role="navigation">
         <div class="nav-wrapper container">
-            <a href="/" title="На главную" class="brand-logo">
-                <img src="/static/img/logo.png" alt="MF">
-            </a>
 
             <?php if ($user) : ?>
 
+                <a href="<?= _e(auth_get_default_url_for_user($user)) ?>" title="На главную" class="brand-logo">
+                    <img src="/static/img/logo.png" alt="MF">
+                </a>
                 <ul class="right hide-on-med-and-down">
                     <li>
                         <form action="<?= _e(router_get_path('logout')) ?>" method="post">
@@ -55,6 +55,10 @@ $user = auth_get_current_user();
                 </ul>
 
             <?php else : ?>
+
+                <a href="/" title="На главную" class="brand-logo">
+                    <img src="/static/img/logo.png" alt="MF">
+                </a>
 
                 <ul class="right hide-on-med-and-down">
                     <li>
