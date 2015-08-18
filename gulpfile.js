@@ -32,7 +32,6 @@ gulp.task('styles', function () {
         container: 'gulp-ruby-sass-styles'
     })
         .pipe(autoprefixer(conf.browsersTarget))
-        .pipe(gulp.dest(conf.paths.dest + 'css'))
         .pipe(rename({suffix: '.min'}))
         .pipe(minifycss())
         .pipe(gulp.dest(conf.paths.dest + 'css'));
@@ -46,7 +45,6 @@ gulp.task('scripts', function () {
         .pipe(jshint())
         .pipe(jshint.reporter('default'))
         .pipe(concat('main.js'))
-        .pipe(gulp.dest(conf.paths.dest + 'js'))
         .pipe(rename({suffix: '.min'}))
         .pipe(uglify())
         .pipe(gulp.dest(conf.paths.dest + 'js'));
@@ -59,7 +57,6 @@ gulp.task('lib-materialize-css', function () {
         container: 'gulp-ruby-sass-materialize'
     })
         .pipe(autoprefixer(conf.browsersTarget))
-        .pipe(gulp.dest(conf.paths.materialize.dest + 'css'))
         .pipe(rename({suffix: '.min'}))
         .pipe(minifycss())
         .pipe(gulp.dest(conf.paths.materialize.dest + 'css'));
@@ -98,7 +95,6 @@ gulp.task('lib-materialize-js', function () {
         conf.paths.materialize.src + "js/character_counter.js"
     ])
         .pipe(concat('materialize.js'))
-        .pipe(gulp.dest(conf.paths.materialize.dest + 'js'))
         .pipe(rename({suffix: '.min'}))
         .pipe(uglify())
         .pipe(gulp.dest(conf.paths.materialize.dest + 'js'));
