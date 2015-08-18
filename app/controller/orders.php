@@ -4,7 +4,8 @@
  */
 
 require_once __DIR__ . '/../require.php';
-require_services('request', 'response', 'template', 'auth', 'validate', 'security');
+require_services('request', 'response', 'template', 'auth', 'validate', 'security', 'billing');
+require_repos('orders');
 
 /**
  * Список заказов.
@@ -18,9 +19,15 @@ function controller_orders_list()
         return;
     }
 
-    // TODO: get orders list
+    $limit = 10;
+    $orders = repo_orders_get_list($limit);
+    $customerIds = array_column($orders, 'customer_id');
+    $customers = repo_users_get_by_ids($customerIds);
 
-    response_send(template_render('orders/list'));
+    response_send(template_render('orders/list', [
+        'orders' => $orders,
+        'customers' => $customers,
+    ]));
 }
 
 /**
@@ -42,6 +49,7 @@ function controller_orders_create()
     ];
     $errors = [];
     $createdOrder = [];
+    $createErrors = [];
 
     if (request_is_post()) {
         $order['price'] = _p('price', 0, APP_PARAM_FLOAT);
@@ -60,12 +68,21 @@ function controller_orders_create()
         ]);
 
         if (empty($errors)) {
-            // TODO: save to db
-            $createdOrder = $order;
-            $order = [
-                'price' => '',
-                'description' => '',
-            ];
+            $orderId = repo_orders_create(
+                billing_format_dollars_as_cents($order['price']),
+                $order['description'],
+                $user['id']
+            );
+
+            if ($orderId !== false) {
+                $createdOrder = repo_orders_get_one_by_id($orderId);
+                $order = [
+                    'price' => '',
+                    'description' => '',
+                ];
+            } else {
+                $createErrors = ['Не удалось добавить заказ. Попробуйте позже.'];
+            }
         }
     }
 
@@ -73,6 +90,7 @@ function controller_orders_create()
         'order' => $order,
         'errors' => $errors,
         'createdOrder' => $createdOrder,
+        'createErrors' => $createErrors,
     ]));
 }
 

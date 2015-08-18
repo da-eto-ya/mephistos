@@ -2,6 +2,7 @@
 /** @var array $order ['price' => цена, 'description' => описание] */
 /** @var array $errors ['price'? => array, 'description'? => array] */
 /** @var array $createdOrder */
+/** @var array $createErrors */
 ?><!doctype html>
 <html lang="ru">
 <?= template_render('_elements/head', ['heading' => 'Добавить заказ']); ?>
@@ -15,6 +16,10 @@
                   class="col s12 m10 offset-m1 card hoverable order-form">
                 <div class="form-inner">
                     <h3>Добавить заказ</h3>
+
+                    <?php if (!empty($createErrors)) : ?>
+                        <?= template_render('_elements/error_row', ['errors' => $createErrors]) ?>
+                    <?php endif; ?>
 
                     <div class="row">
                         <div class="input-field col s12">

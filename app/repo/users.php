@@ -12,6 +12,37 @@ const APP_ROLE_EXECUTOR = 0;
 const APP_ROLE_CUSTOMER = 1;
 
 /**
+ * Возвращает массив пользователей с данными id, индексированный этими id.
+ *
+ * @param array $ids
+ * @return array
+ */
+function repo_users_get_by_ids(array $ids = [])
+{
+    // flip-flip - быстрый способ получить уникальные значения
+    $ids = array_flip(array_flip(array_map('intval', $ids)));
+
+    if (!count($ids)) {
+        return [];
+    }
+
+    $placeholders = join(',', array_fill(0, count($ids), '?'));
+    $rows = db_get_all('users', "SELECT * FROM `users` WHERE `id` IN ({$placeholders})", $ids);
+
+    if (!$rows) {
+        return [];
+    }
+
+    $users = [];
+
+    foreach ($rows as $row) {
+        $users[$row['id']] = $row;
+    }
+
+    return $users;
+}
+
+/**
  * Получить пользователя по ID.
  *
  * @param int $uid
@@ -73,7 +104,7 @@ function repo_users_insert_one(array $fields)
         return false;
     }
 
-    $fields['created'] = date('Y-m-d H:i:s');
+    $fields['created'] = date(APP_DB_DATE_FORMAT);
 
     return db_insert_one_unsafe('users', $fields, __repo_users_allowed_fields(), __repo_users_required_fields());
 }
@@ -145,7 +176,7 @@ function repo_users_validate_fields(array $fields)
             ['in_array', 'params' => [[APP_ROLE_EXECUTOR, APP_ROLE_CUSTOMER]]],
         ],
         'created' => [
-            ['mysql_datetime']
+            ['db_datetime'],
         ],
     ], false);
 }

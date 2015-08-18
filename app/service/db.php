@@ -6,6 +6,9 @@
 require_once __DIR__ . '/../require.php';
 require_services('log');
 
+/** Формат даты в БД */
+const APP_DB_DATE_FORMAT = 'Y-m-d H:i:s';
+
 /**
  * Устанавливает или возвращает конфигурацию БД.
  *
@@ -27,6 +30,7 @@ function db_config(array $config = null)
                 'port' => '3306',
                 'username' => 'root',
                 'password' => '',
+                'encoding' => 'utf8',
             ];
 
             foreach ($config['connections'] as $name => $conn) {
@@ -98,6 +102,12 @@ function db_connection($name)
             $code = mysqli_connect_errno();
             $error = mysqli_connect_error();
             log_alert("DB connection error: ({$code}) {$error}");
+
+            return false;
+        }
+
+        if (!mysqli_set_charset($link, $conn['encoding'])) {
+            log_alert("DB set encoding error", [$name, $conn['encoding']]);
 
             return false;
         }
@@ -520,11 +530,11 @@ function db_update_one_unsafe($table, array $fields, $idField, $idValue, array $
     $setFields = [];
     $params = [];
 
-    foreach ($fields as $field => $idValue) {
+    foreach ($fields as $field => $value) {
         if (!empty($allowedFields[$field])) {
             // TODO: quote backticks?
             $setFields[] = "`$field` = ?";
-            $params[] = $idValue;
+            $params[] = $value;
         } else {
             break;
         }
@@ -589,4 +599,36 @@ function db_insert_one_unsafe($table, array $fields, array $allowedFields, array
     }
 
     return db_inserted_id($table);
+}
+
+/**
+ * Выполнить запрос и возвратить все.
+ *
+ * @param string $table имя таблицы
+ * @param string $sql строка запроса
+ * @param array  $params параметры для запроса
+ * @return array|bool false в случае ошибки, массив строк в случае успеха
+ */
+function db_get_all($table, $sql, array $params = [])
+{
+    $result = db_query($table, $sql, $params);
+
+    if (!$result) {
+        return false;
+    }
+
+    return db_fetch_all($result);
+}
+
+/**
+ * Получить все записи, подпадающие под условие.
+ *
+ * @param string $table имя таблицы
+ * @param string $clause условие после 'SELECT * FROM `{$table}`'
+ * @param array  $params параметры для запроса
+ * @return array|bool false в случае ошибки, массив строк в случае успеха
+ */
+function db_get_all_where($table, $clause, array $params = [])
+{
+    return db_get_all($table, "SELECT * FROM `{$table}` {$clause}", $params);
 }

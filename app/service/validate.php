@@ -4,7 +4,7 @@
  */
 
 require_once __DIR__ . '/../require.php';
-require_services('log');
+require_services('log', 'db');
 
 /**
  * Значение не пусто.
@@ -34,11 +34,12 @@ function validate_regex($value, $regex = '/^\w+$/')
  *
  * @param string $value
  * @param int    $length
+ * @param string $encoding
  * @return bool
  */
-function validate_max_length($value, $length = 0)
+function validate_max_length($value, $length = 0, $encoding = 'UTF-8')
 {
-    return strlen((string) $value) <= (int) $length;
+    return mb_strlen((string) $value, $encoding) <= (int) $length;
 }
 
 /**
@@ -51,6 +52,24 @@ function validate_max_length($value, $length = 0)
 function validate_in_array($value, array $allowed = [])
 {
     return in_array($value, $allowed);
+}
+
+/**
+ * Дата в формате APP_DB_DATE_FORMAT ('Y-m-d H:i:s' для MySQL).
+ *
+ * @param mixed $value
+ * @return bool
+ */
+function validate_db_datetime($value)
+{
+    $value = (string) $value;
+    $dt = date_create_from_format(APP_DB_DATE_FORMAT, $value);
+
+    if (false === $dt || date_format($dt, APP_DB_DATE_FORMAT) !== $value) {
+        return false;
+    }
+
+    return true;
 }
 
 /**
@@ -154,6 +173,7 @@ function __validate_default_message($name)
         'max_length' => 'Поле слишком длинное',
         'is_int' => 'Поле должно содержать число',
         'range' => 'Значение слишком большое или слишком маленькое',
+        'db_datetime' => 'Поле содержит дату в неверном формате',
     ];
     static $_default = 'Недопустимое значение поля';
 

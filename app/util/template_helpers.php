@@ -3,6 +3,9 @@
  * Хелперы для шаблонизатора.
  */
 
+require_once __DIR__ . '/../require.php';
+require_services('billing');
+
 /**
  * Экранируем выходные значения.
  *
@@ -23,9 +26,5 @@ function _e($str)
  */
 function _money($number)
 {
-    $number = (int) $number;
-    $div = intdiv($number, 100);
-    $mod = $number % 100;
-
-    return sprintf("%d.%02d", $div, ($number >= 0 ? $mod : -$mod));
+    return billing_format_cents_as_dollars($number);
 }
