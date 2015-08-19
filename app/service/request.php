@@ -66,6 +66,23 @@ function request_has_method($method, array $request = null)
 }
 
 /**
+ * Проверяет, что текущий запрос похож на ajax.
+ *
+ * @return bool
+ */
+function request_is_ajax()
+{
+    static $_ajax = null;
+
+    if (null === $_ajax) {
+        $_ajax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) &&
+            strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
+    }
+
+    return $_ajax;
+}
+
+/**
  * Читает cookie.
  *
  * @param string $name

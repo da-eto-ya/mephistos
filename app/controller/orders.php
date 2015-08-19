@@ -76,6 +76,7 @@ function controller_orders_create()
 
             if ($orderId !== false) {
                 $createdOrder = repo_orders_get_one_by_id($orderId);
+                $createdOrder['price_dollar'] = billing_format_cents_as_dollars($createdOrder['price']);
                 $order = [
                     'price' => '',
                     'description' => '',
@@ -86,12 +87,18 @@ function controller_orders_create()
         }
     }
 
-    response_send(template_render('orders/create', [
+    $result = [
         'order' => $order,
         'errors' => $errors,
         'createdOrder' => $createdOrder,
         'createErrors' => $createErrors,
-    ]));
+    ];
+
+    if (request_is_ajax()) {
+        response_json($result);
+    } else {
+        response_send(template_render('orders/create', $result));
+    }
 }
 
 /**
@@ -126,7 +133,7 @@ function controller_orders_execute()
 }
 
 /**
- * В случае отсутствия доступа посылает код перенаправления клиенту.
+ * В случае отсутствия доступа посылает код ошибки или перенаправления клиенту.
  *
  * @param array $user модель пользователя
  * @param int   $role требуемая роль
@@ -137,7 +144,12 @@ function controller_orders_execute()
 function __controller_orders_deny_access($user, $role)
 {
     if (!$user) {
-        response_redirect('/');
+        // TODO: create helper for ajax redirects
+        if (request_is_ajax()) {
+            response_json(['redirect' => '/'], 390);
+        } else {
+            response_redirect('/');
+        }
 
         return true;
     }

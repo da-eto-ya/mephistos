@@ -21,7 +21,9 @@ $user = auth_get_current_user();
 
                     <?php if ($user['avatar']): ?>
 
-                        <li>
+                        <li id="nav-user-info"
+                            data-avatar="<?= _e($user['avatar']) ?>"
+                            data-username="<?= _e($user['username']) ?>">
                             <img src="<?= _e($user['avatar']) ?>"
                                  alt="<?= _e($user['username']) ?>" title="<?= _e($user['username']) ?>"
                                  class="circle nav-avatar">
@@ -29,7 +31,9 @@ $user = auth_get_current_user();
 
                     <?php else : ?>
 
-                        <li>
+                        <li id="nav-user-info"
+                            data-avatar="<?= _e($user['avatar']) ?>"
+                            data-username="<?= _e($user['username']) ?>">
                             <span title="<?= _e($user['username']) ?>">(<?= _e($user['username']) ?>)</span>
                         </li>
 

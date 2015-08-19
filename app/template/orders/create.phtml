@@ -36,8 +36,7 @@
                                 'errors' => !empty($errors['price']) ? $errors['price'] : [],
                             ]) ?>
 
-                            <label for="price"
-                                   data-error="Введите сумму от 1 до 10000 с точностью до центов">Стоимость</label>
+                            <label for="price">Стоимость</label>
                         </div>
                     </div>
 
@@ -66,6 +65,14 @@
                             </button>
                         </div>
                     </div>
+
+                    <div class="row row-progress-bottom">
+                        <div class="col s12 progress-container" data-progress="progress">
+                            <div class="progress deep-orange lighten-4">
+                                <div class="indeterminate deep-orange darken-4"></div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </form>
         </div>
@@ -75,6 +82,38 @@
                 <h4 class="col s12">Заказ добавлен</h4>
             </div>
         <?php endif; ?>
+    </div>
+
+
+    <div class="container">
+        <div class="row">
+            <div class="col s12">
+                <ul class="collection order-list order-list-created" id="created-orders">
+                </ul>
+
+                <script type="text/x-handlebars-template" id="created-orders-new">
+                    <li class="collection-item avatar order-item animated bounce">
+                        {{#if customer.avatar}}
+                            <img src="{{customer.avatar}}" alt="{{customer.username}}" class="circle">
+                            <span class="title">{{customer.username}} &bullet;
+                                <span class="deep-orange-text">{{order.price_dollar}}</span>
+                                <nobr>&bullet;
+                                    <span class="blue-grey-text text-lighten-2">{{order.created}}</span>
+                                </nobr>
+                            </span>
+                        {{else}}
+                            <span class="title">
+                                <span class="deep-orange-text">{{order.price_dollar}}</span>
+                                <nobr>&bullet;
+                                    <span class="blue-grey-text text-lighten-2">{{order.created}}</span>
+                                </nobr>
+                            </span>
+                        {{/if}}
+                        <p>{{order.description}}</p>
+                    </li>
+                </script>
+            </div>
+        </div>
     </div>
 </main>
 
