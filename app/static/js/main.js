@@ -124,7 +124,7 @@
                             // ошибки не уровня формы
                             if (data.createErrors && !$.isEmptyObject(data.createErrors)) {
                                 $.each(data.createErrors, function (idx, err) {
-                                    Materialize.toast('Ошибка: ' + err, 6000);
+                                    Materialize.toast('Ошибка: ' + err, 10000);
                                 });
                             }
                         })

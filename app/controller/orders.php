@@ -86,37 +86,43 @@ function controller_orders_create()
     $createErrors = [];
 
     if (request_is_post()) {
-        $order['price'] = _p('price', 0, APP_PARAM_FLOAT);
-        $order['description'] = _p('description', '');
+        if (!auth_validate_csrf(_p('_csrf', ''), ['orders', 'create'])) {
+            $createErrors[] = 'Похоже, у вас закончилась сессия или ваш аккаунт пытаются использовать мошенники.';
+            $createErrors[] = 'Для корректной работы с сайтом обновите страницу или перелогиньтесь.';
+            // TODO: подумать, может, ввести код ошибки для ajax и обрабатывать csrf отдельно
+        } else {
+            $order['price'] = _p('price', 0, APP_PARAM_FLOAT);
+            $order['description'] = _p('description', '');
 
-        $errors = validate_fields($order, [
-            'price' => [
-                ['required', 'msg' => 'Введите стоимость'],
-                ['regex', 'params' => '/^[0-9]+(?:[,\.][0-9]{2})?$/', 'msg' => 'Введите сумму в формате 123.45'],
-                ['range', 'params' => [1, 10001], 'msg' => 'Введите сумму от 1 до 10000'],
-            ],
-            'description' => [
-                ['required', 'msg' => 'Введите описание'],
-                ['max_length', 'params' => 665, 'Длина описания не должна превышать 665 символов'],
-            ],
-        ]);
+            $errors = validate_fields($order, [
+                'price' => [
+                    ['required', 'msg' => 'Введите стоимость'],
+                    ['regex', 'params' => '/^[0-9]+(?:[,\.][0-9]{2})?$/', 'msg' => 'Введите сумму в формате 123.45'],
+                    ['range', 'params' => [1, 10001], 'msg' => 'Введите сумму от 1 до 10000'],
+                ],
+                'description' => [
+                    ['required', 'msg' => 'Введите описание'],
+                    ['max_length', 'params' => 665, 'Длина описания не должна превышать 665 символов'],
+                ],
+            ]);
 
-        if (empty($errors)) {
-            $orderId = repo_orders_create(
-                billing_format_dollars_as_cents($order['price']),
-                $order['description'],
-                $user['id']
-            );
+            if (empty($errors)) {
+                $orderId = repo_orders_create(
+                    billing_format_dollars_as_cents($order['price']),
+                    $order['description'],
+                    $user['id']
+                );
 
-            if ($orderId !== false) {
-                $createdOrder = repo_orders_get_one_by_id($orderId);
-                $createdOrder['price_dollar'] = billing_format_cents_as_dollars($createdOrder['price']);
-                $order = [
-                    'price' => '',
-                    'description' => '',
-                ];
-            } else {
-                $createErrors = ['Не удалось добавить заказ. Попробуйте позже.'];
+                if ($orderId !== false) {
+                    $createdOrder = repo_orders_get_one_by_id($orderId);
+                    $createdOrder['price_dollar'] = billing_format_cents_as_dollars($createdOrder['price']);
+                    $order = [
+                        'price' => '',
+                        'description' => '',
+                    ];
+                } else {
+                    $createErrors = ['Не удалось добавить заказ. Попробуйте позже.'];
+                }
             }
         }
     }

@@ -15,6 +15,7 @@
             <form action="<?= _e(router_get_path('orders', 'create')) ?>" method="post"
                   id="order-form"
                   class="col s12 m10 offset-m1 card hoverable order-form">
+                <?= _csrf_hidden(['orders', 'create']) ?>
                 <div class="form-inner">
                     <h3>Добавить заказ</h3>
 
