@@ -13,6 +13,7 @@ $user = auth_get_current_user();
                 <ul class="right hide-on-med-and-down">
                     <li>
                         <form action="<?= _e(router_get_path('logout')) ?>" method="post">
+                            <?= _csrf_hidden('logout') ?>
                             <button type="submit" class="btn-flat nav-logout" title="Выйти из системы">
                                 <i class="material-icons mdi-action-perm-identity left"></i>Выйти
                             </button>
@@ -51,6 +52,7 @@ $user = auth_get_current_user();
                 <ul id="nav-mobile" class="side-nav">
                     <li>
                         <form action="<?= _e(router_get_path('logout')) ?>" method="post">
+                            <?= _csrf_hidden('logout') ?>
                             <button type="submit" class="btn-flat nav-logout" title="Выйти из системы">
                                 <i class="material-icons mdi-action-perm-identity left"></i>Выйти
                             </button>

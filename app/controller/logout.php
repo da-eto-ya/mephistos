@@ -21,8 +21,7 @@ function controller_logout()
 
     $request = request_get_current();
 
-    if (request_is_post($request)) {
-        // TODO: check csrf
+    if (request_is_post($request) && auth_validate_csrf(_p('_csrf', ''), ['logout'])) {
         auth_stop_authorized_session();
         response_redirect('/');
 

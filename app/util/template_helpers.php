@@ -4,7 +4,7 @@
  */
 
 require_once __DIR__ . '/../require.php';
-require_services('billing');
+require_services('billing', 'auth');
 
 /**
  * Экранируем выходные значения.
@@ -27,4 +27,27 @@ function _e($str)
 function _money($number)
 {
     return billing_format_cents_as_dollars($number);
+}
+
+/**
+ * CSRF-токен для действия.
+ *
+ * @param array $params
+ * @return string
+ */
+function _csrf($params = [])
+{
+    return (string) auth_get_csrf((array) $params);
+}
+
+/**
+ * input[type=hidden] с CSRF-токеном для заданного действия.
+ *
+ * @param array  $params параметры действия
+ * @param string $name input[name]
+ * @return string
+ */
+function _csrf_hidden($params = [], $name = '_csrf')
+{
+    return '<input type="hidden" name="' . _e($name) . '" value="' . _e(_csrf($params)) . '">';
 }

@@ -96,8 +96,14 @@ function auth_generate_session_token($uid, array $data = [])
     $config = auth_config();
     $now = time();
 
+    // для jti совершенно не обязательно использовать криптостойкий алгоритм.
+    // это просто id сессии. достаточно того, чтобы была крайне малая вероятность
+    // случайного совпадения значений, отвечающих за различные сессии.
+    $jti = md5(join(':', [$uid, time(), mt_rand(), $config['secret_key']]));
+
     $payload = array_merge($data, [
         'sub' => $uid,
+        'jti' => $jti,
         'iat' => $now,
         'nbf' => $now,
         'exp' => $now + $config['expire'],
@@ -260,4 +266,52 @@ function auth_is_authorized_access_allowed(array $user = null, array $roles = []
     }
 
     return in_array($user['role'], $roles);
+}
+
+/**
+ * Получить токен CSRF для действия, определяемого переданными параметрами.
+ *
+ * @param array      $params уникальные параметры запроса (массив, ключи игнорируются)
+ * @param array|null $sessionData данные сессии
+ * @return bool|string false в случае отсутствия данных сессии или ошибки
+ */
+function auth_get_csrf(array $params = [], $sessionData = null)
+{
+    static $_cache = [];
+
+    if (null === $sessionData) {
+        $sessionData = auth_get_session_data();
+    }
+
+    if (!$sessionData) {
+        return false;
+    }
+
+    $params[] = $sessionData['jti'];
+    $action = join(':', $params);
+
+    if (!isset($_cache[$action])) {
+        $_cache[$action] = hash_hmac('SHA256', $action, auth_config()['secret_key']);
+    }
+
+    return $_cache[$action];
+}
+
+/**
+ * Проверить, что переданный токен соответствует генерированному для данных параметров.
+ *
+ * @param string $userToken токен, полученный от пользователя
+ * @param array  $params уникальные параметры запроса (массив, ключи игнорируются)
+ * @param null   $sessionData данные сессии
+ * @return bool true в случае совпадения токенов (валидный запрос)
+ */
+function auth_validate_csrf($userToken, array $params = [], $sessionData = null)
+{
+    $generatedToken = auth_get_csrf($params, $sessionData);
+
+    if (false === $generatedToken) {
+        return false;
+    }
+
+    return hash_equals($generatedToken, $userToken);
 }
