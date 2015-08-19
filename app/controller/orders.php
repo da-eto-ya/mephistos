@@ -20,14 +20,33 @@ function controller_orders_list()
     }
 
     $limit = 10;
-    $orders = repo_orders_get_list($limit);
-    $customerIds = array_column($orders, 'customer_id');
-    $customers = repo_users_get_by_ids($customerIds);
 
-    response_send(template_render('orders/list', [
+    $from = _g('from', '');
+    $fromRand = _g('fromRand', 0, APP_PARAM_INT);
+
+    if (!$from || !validate_db_datetime($from)) {
+        $from = date(APP_DB_DATE_FORMAT, time() + 1);
+    }
+
+    $orders = repo_orders_get_list($limit, $from, $fromRand);
+    $customers = repo_users_get_by_ids(array_column($orders, 'customer_id'));
+
+    $lastOrder = $orders ? $orders[count($orders) - 1] : false;
+    $next = $lastOrder ? $lastOrder['created'] : '';
+    $nextRand = $lastOrder ? $lastOrder['created_rand'] : 0;
+
+    $result = [
         'orders' => $orders,
         'customers' => $customers,
-    ]));
+        'next' => $next,
+        'nextRand' => $nextRand,
+    ];
+
+    if (request_is_ajax()) {
+        response_json($result);
+    } else {
+        response_send(template_render('orders/list', $result));
+    }
 }
 
 /**
@@ -58,7 +77,7 @@ function controller_orders_create()
         $errors = validate_fields($order, [
             'price' => [
                 ['required', 'msg' => 'Введите стоимость'],
-                ['regex', 'params' => '/^[0-9]+(?:[,\.][0-9]{2})?$/', 'msg' => 'Введите сумму в формате «123.45»'],
+                ['regex', 'params' => '/^[0-9]+(?:[,\.][0-9]{2})?$/', 'msg' => 'Введите сумму в формате 123.45'],
                 ['range', 'params' => [1, 10001], 'msg' => 'Введите сумму от 1 до 10000'],
             ],
             'description' => [

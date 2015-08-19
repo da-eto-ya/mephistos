@@ -16,15 +16,15 @@
             }
         };
 
-        // обработка ошибок ajax
+        // удобные функции для форм
         var formHelper = {
-            disable: function (form) {
+            stateAjax: function (form) {
                 var $form = $(form);
                 $form.find('[data-progress]').css('visibility', 'visible');
                 $form.find(':submit').prop('disabled', true);
                 $form.find(':input:not([readonly="readonly"])').attr('data-ajax-submit', 'progress').prop('readonly', true);
             },
-            enable: function (form) {
+            stateNormal: function (form) {
                 var $form = $(form);
                 $form.find(':submit').prop('disabled', false);
                 $form.find('[data-progress]').css('visibility', 'hidden');
@@ -50,6 +50,7 @@
             }
         };
 
+        // обработка ошибок ajax
         // TODO: handle other + 390 (redirect) + beautiful messages about
         $(document).ajaxError(function (event, xhr, settings, error) {
             if (xhr.status === 0) {
@@ -97,7 +98,7 @@
 
                     $form.ajaxSubmit({
                         beforeSubmit: function () {
-                            formHelper.disable(form);
+                            formHelper.stateAjax(form);
                         }
                     }).data('jqxhr')
                         .done(function (data, status, xhr) {
@@ -128,7 +129,7 @@
                             }
                         })
                         .always(function (xhr, status) {
-                            formHelper.enable(form);
+                            formHelper.stateNormal(form);
                         });
                 }
             }));
@@ -142,7 +143,7 @@
 
             $(this).ajaxSubmit({
                 beforeSubmit: function () {
-                    formHelper.disable(form);
+                    formHelper.stateAjax(form);
                 }
             }).data('jqxhr')
                 .done(function (data, status, xhr) {
@@ -165,7 +166,7 @@
                     }
                 })
                 .always(function (xhr, status) {
-                    formHelper.enable(form);
+                    formHelper.stateNormal(form);
                 });
 
             return false;
