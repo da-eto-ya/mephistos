@@ -46,7 +46,10 @@ gulp.task('scripts', function () {
         .pipe(jshint.reporter('default'))
         .pipe(concat('main.js'))
         .pipe(rename({suffix: '.min'}))
-        .pipe(uglify())
+        .pipe(uglify().on('error', function (e) {
+            console.log(e.message);
+            return this.end();
+        }))
         .pipe(gulp.dest(conf.paths.dest + 'js'));
 });
 
@@ -96,7 +99,10 @@ gulp.task('lib-materialize-js', function () {
     ])
         .pipe(concat('materialize.js'))
         .pipe(rename({suffix: '.min'}))
-        .pipe(uglify())
+        .pipe(uglify().on('error', function (e) {
+            console.log(e.message);
+            return this.end();
+        }))
         .pipe(gulp.dest(conf.paths.materialize.dest + 'js'));
 });
 
