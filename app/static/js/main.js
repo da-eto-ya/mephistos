@@ -148,6 +148,8 @@
                 }
             }).data('jqxhr')
                 .done(function (data, status, xhr) {
+                    console.log(data);
+
                     if (data.success) {
                         if (typeof data.balance !== 'undefined' && data.balance !== false) {
                             Materialize.toast('Успешно! Ваш баланс: ' + data.balance, 6000);
@@ -206,17 +208,14 @@
                         var fetched = [];
                         $.each(data.orders, function (idx, order) {
                             var item = fetchedTemplate({order: order});
-                            var $item = $(item).attr('data-fetched', 'new');
+                            var $item = $(item);
+                            $item.find('[data-form="execute-order"]').on('submit', processExecuteForm);
                             fetched.push($item);
                         });
 
                         if (fetched.length) {
                             $fetchedOrders.append(fetched);
                         }
-
-                        $fetchedOrders
-                            .find('[data-fetched="new"] form[data-form="execute-order"]')
-                            .on('submit', processExecuteForm);
                     })
                     .always(function (xhr, status) {
                         formHelper.stateNormal(form);
