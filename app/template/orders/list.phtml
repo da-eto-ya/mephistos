@@ -22,7 +22,7 @@
                                 $customers[$order['customer_id']] :
                                 false;
                             ?>
-                            <li class="collection-item avatar order-item">
+                            <li class="collection-item avatar order-item" id="order-item-<?= _e($order['id']) ?>">
 
                                 <?php if (!empty($customer['avatar']) && isset($customer['username'])) : ?>
                                     <img src="<?= _e($customer['avatar']) ?>"
@@ -54,11 +54,13 @@
                                 <p><?= _e($order['description']) ?></p>
 
                                 <div class="secondary-content">
-                                    <form action="<?= _e(router_get_path('orders', 'execute')) ?>" method="post">
+                                    <form data-form="execute-order"
+                                          action="<?= _e(router_get_path('orders', 'execute')) ?>" method="post">
                                         <input type="hidden" name="id" value="<?= _e($order['id']) ?>">
                                         <button type="submit"
                                                 class="btn-floating waves-effect waves-light transparent">
-                                            <i class="material-icons mdi-action-done grey-text text-darken-4" title="Сделать!"></i></button>
+                                            <i class="material-icons mdi-action-done grey-text text-darken-4"
+                                                title="Сделано!"></i></button>
                                     </form>
                                 </div>
                             </li>

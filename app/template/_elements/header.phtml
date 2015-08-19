@@ -43,7 +43,7 @@ $user = auth_get_current_user();
                     <li>
                         <div class="nav-balance">
                             <i class="material-icons mdi-editor-attach-money left"></i>
-                            <?= _e(_money($user['balance'])) ?>
+                            <span id="nav-balance-handler"><?= _e(_money($user['balance'])) ?></span>
                         </div>
                     </li>
                 </ul>

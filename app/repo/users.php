@@ -82,6 +82,23 @@ function repo_users_sub_balance($uid, $value)
 }
 
 /**
+ * Получает баланс пользователя.
+ *
+ * @param int $uid
+ * @return bool
+ */
+function repo_users_get_balance($uid)
+{
+    $user = repo_users_get_one_by_id($uid);
+
+    if (!$user) {
+        return false;
+    }
+
+    return $user['balance'];
+}
+
+/**
  * Получить исполнителя по ID.
  *
  * @param int $uid

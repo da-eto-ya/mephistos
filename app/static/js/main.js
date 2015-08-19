@@ -1,6 +1,6 @@
 (function ($) {
     $(function () {
-        // navigation
+        // строка навигации
         $('.button-collapse').sideNav();
 
         // валидатор для непустых полей
@@ -16,6 +16,7 @@
             }
         };
 
+        // обработка ошибок ajax
         var formHelper = {
             disable: function (form) {
                 var $form = $(form);
@@ -68,15 +69,24 @@
             }
         });
 
+        // информация о текущем пользователе
+        var currentUserInfo = {};
+        var $navUserInfo = $('#nav-user-info');
+
+        if ($navUserInfo.length) {
+            currentUserInfo = {
+                avatar: $navUserInfo.data('avatar'),
+                username: $navUserInfo.data('username')
+            };
+        }
+
+        // строка баланса
+        var $balanceHandler = $('#nav-balance-handler');
+
         // форма добавления заказа
         var $orderForm = $('#order-form');
 
         if ($orderForm.length) {
-            var $navUserInfo = $('#nav-user-info');
-            var customer = {
-                avatar: $navUserInfo.data('avatar'),
-                username: $navUserInfo.data('username')
-            };
             var $createdOrders = $('#created-orders');
             var orderTemplate = Handlebars.compile($("#created-orders-new").html());
 
@@ -91,21 +101,30 @@
                         }
                     }).data('jqxhr')
                         .done(function (data, status, xhr) {
-                            console.log(data);
+                            // добавленный заказ
                             if (data.createdOrder && !$.isEmptyObject(data.createdOrder)) {
                                 Materialize.toast('Заказ на сумму ' + data.createdOrder['price_dollar'] +
                                     ' успешно добавлен', 6000);
 
-                                var orderHtml = orderTemplate({customer: customer, order: data.createdOrder});
+                                var orderHtml = orderTemplate({customer: currentUserInfo, order: data.createdOrder});
                                 $createdOrders.prepend(orderHtml);
                             }
 
+                            // форма
                             if (data.order) {
                                 formHelper.populate(form, data.order);
                             }
 
+                            // ошибки уровня формы
                             if (data.errors) {
                                 formHelper.showErrors(form, data.errors);
+                            }
+
+                            // ошибки не уровня формы
+                            if (data.createErrors && !$.isEmptyObject(data.createErrors)) {
+                                $.each(data.createErrors, function (err, idx) {
+                                    Materialize.toast('Ошибка: ' + err, 6000);
+                                });
                             }
                         })
                         .always(function (xhr, status) {
@@ -114,5 +133,42 @@
                 }
             }));
         }
+
+        // форма исполнения заказа
+        $('form[data-form="execute-order"]').on('submit', function () {
+            var form = this;
+            var id = $(form).find('[name="id"]').val();
+            var $li = $('#order-item-' + id);
+
+            $(this).ajaxSubmit({
+                beforeSubmit: function () {
+                    formHelper.disable(form);
+                }
+            }).data('jqxhr')
+                .done(function (data, status, xhr) {
+                    if (data.success) {
+                        if (typeof data.balance !== 'undefined' && data.balance !== false) {
+                            Materialize.toast('Успешно! Ваш баланс: ' + data.balance, 6000);
+                            $balanceHandler.html(data.balance);
+                        } else {
+                            Materialize.toast('Не удалось получить баланс', 6000);
+                        }
+
+                        if ($li.length) {
+                            $li.find(':submit').remove();
+                            $li.fadeOut(200, function() { $(this).remove(); });
+                        }
+                    }
+
+                    if (data.error) {
+                        Materialize.toast(data.error, 6000);
+                    }
+                })
+                .always(function (xhr, status) {
+                    formHelper.enable(form);
+                });
+
+            return false;
+        });
     });
 })(jQuery);

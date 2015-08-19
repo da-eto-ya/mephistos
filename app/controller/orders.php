@@ -5,7 +5,7 @@
 
 require_once __DIR__ . '/../require.php';
 require_services('request', 'response', 'template', 'auth', 'validate', 'security', 'billing');
-require_repos('orders');
+require_repos('orders', 'users');
 
 /**
  * Список заказов.
@@ -126,10 +126,22 @@ function controller_orders_execute()
         return;
     }
 
-    /*$success = */billing_order_execute($id, $user);
-    // TODO: message or json result
+    $success = billing_order_execute($id, $user);
+    $balance = false;
 
-    response_redirect(router_get_path('orders', 'list'));
+    if ($success) {
+        $balance = repo_users_get_balance($user['id']);
+    }
+
+    if (request_is_ajax()) {
+        response_json([
+            'success' => $success,
+            'error' => $success ? '' : 'Не удалось исполнить заказ',
+            'balance' => (false !== $balance) ? billing_format_cents_as_dollars($balance) : false,
+        ]);
+    } else {
+        response_redirect(router_get_path('orders', 'list'));
+    }
 }
 
 /**
