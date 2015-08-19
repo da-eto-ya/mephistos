@@ -123,7 +123,7 @@
 
                             // ошибки не уровня формы
                             if (data.createErrors && !$.isEmptyObject(data.createErrors)) {
-                                $.each(data.createErrors, function (err, idx) {
+                                $.each(data.createErrors, function (idx, err) {
                                     Materialize.toast('Ошибка: ' + err, 6000);
                                 });
                             }
@@ -136,12 +136,13 @@
         }
 
         // форма исполнения заказа
-        $('form[data-form="execute-order"]').on('submit', function () {
+        var processExecuteForm = function () {
             var form = this;
+            var $form = $(form);
             var id = $(form).find('[name="id"]').val();
             var $li = $('#order-item-' + id);
 
-            $(this).ajaxSubmit({
+            $form.ajaxSubmit({
                 beforeSubmit: function () {
                     formHelper.stateAjax(form);
                 }
@@ -157,7 +158,9 @@
 
                         if ($li.length) {
                             $li.find(':submit').remove();
-                            $li.fadeOut(200, function() { $(this).remove(); });
+                            $li.fadeOut(200, function () {
+                                $(this).remove();
+                            });
                         }
                     }
 
@@ -170,6 +173,57 @@
                 });
 
             return false;
-        });
+        };
+
+        $('form[data-form="execute-order"]').on('submit', processExecuteForm);
+
+        // форма перехода к более старым заказам
+        var $gotoForm = $('#go-to-older-orders-form');
+
+        if ($gotoForm.length) {
+            var $fetchedOrders = $('#order-list-fetched');
+            var fetchedTemplate = Handlebars.compile($("#new-fetched-order").html());
+
+            $gotoForm.on('submit', function () {
+                var form = this;
+                var $form = $(form);
+                var $fromField = $form.find('[name="from"]');
+                var $fromRandField = $form.find('[name="fromRand"]');
+
+                $form.ajaxSubmit({
+                    beforeSubmit: function () {
+                        formHelper.stateAjax(form);
+                    }
+                }).data('jqxhr')
+                    .done(function (data, status, xhr) {
+                        console.log(data);
+
+                        // обновляем данные полей для перехода к следующим записям
+                        $fromField.val(data.next);
+                        $fromRandField.val(data.nextRand);
+
+                        // показываем полученные записи
+                        var fetched = [];
+                        $.each(data.orders, function (idx, order) {
+                            var item = fetchedTemplate({order: order});
+                            var $item = $(item).attr('data-fetched', 'new');
+                            fetched.push($item);
+                        });
+
+                        if (fetched.length) {
+                            $fetchedOrders.append(fetched);
+                        }
+
+                        $fetchedOrders
+                            .find('[data-fetched="new"] form[data-form="execute-order"]')
+                            .on('submit', processExecuteForm);
+                    })
+                    .always(function (xhr, status) {
+                        formHelper.stateNormal(form);
+                    });
+
+                return false;
+            });
+        }
     });
 })(jQuery);

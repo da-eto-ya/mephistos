@@ -31,13 +31,28 @@ function controller_orders_list()
     $orders = repo_orders_get_list($limit, $from, $fromRand);
     $customers = repo_users_get_by_ids(array_column($orders, 'customer_id'));
 
+    // TODO: move inline one model to another to helper or repo
+    foreach ($orders as $key => $order) {
+        if ($order['customer_id'] && isset($customers[$order['customer_id']])) {
+            $customer = $customers[$order['customer_id']];
+            $orders[$key]['customer'] = [
+                'id' => $customer['id'],
+                'username' => $customer['username'],
+                'avatar' => $customer['avatar'],
+            ];
+        } else {
+            $orders[$key]['customer'] = [];
+        }
+
+        $orders[$key]['price_dollar'] = billing_format_cents_as_dollars($order['price']);
+    }
+
     $lastOrder = $orders ? $orders[count($orders) - 1] : false;
     $next = $lastOrder ? $lastOrder['created'] : '';
     $nextRand = $lastOrder ? $lastOrder['created_rand'] : 0;
 
     $result = [
         'orders' => $orders,
-        'customers' => $customers,
         'next' => $next,
         'nextRand' => $nextRand,
     ];

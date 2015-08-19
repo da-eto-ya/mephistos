@@ -1,6 +1,5 @@
 <?php
 /** @var array $orders */
-/** @var array $customers */
 /** @var string $next */
 /** @var string $nextRand */
 ?><!doctype html>
@@ -15,24 +14,28 @@
             <div class="col s12">
                 <h2>Заказы</h2>
 
-                <ul class="collection order-list">
-                    <?php if (!empty($orders)) : ?>
-                        <?php foreach ($orders as $order) : ?>
-                            <?php
-                            $customer = isset($customers[$order['customer_id']]) ?
-                                $customers[$order['customer_id']] :
-                                false;
-                            ?>
-                            <li class="collection-item avatar order-item" id="order-item-<?= _e($order['id']) ?>">
+                <ul class="collection order-list" id="order-list-fetched">
+                    <?php foreach ($orders as $order) : $customer = $order['customer']; ?>
+                        <li class="collection-item avatar order-item" id="order-item-<?= _e($order['id']) ?>">
 
-                                <?php if (!empty($customer['avatar']) && isset($customer['username'])) : ?>
-                                    <img src="<?= _e($customer['avatar']) ?>"
-                                         alt="<?= _e($customer['username']) ?>"
-                                         class="circle">
+                            <?php if (!empty($customer['avatar']) && isset($customer['username'])) : ?>
+                                <img src="<?= _e($customer['avatar']) ?>"
+                                     alt="<?= _e($customer['username']) ?>"
+                                     class="circle">
 
-                                    <span class="title">
+                                <span class="title">
                                         <?= _e($customer['username']) ?>
-                                        &bullet;
+                                    &bullet;
+                                    <span class="deep-orange-text"><?= _e(_money($order['price'])) ?></span>
+                                        <nobr>&bullet;
+                                            <span
+                                                class="blue-grey-text text-lighten-2"><?= _e($order['created']) ?></span>
+                                        </nobr>
+                                    </span>
+
+                            <?php else : ?>
+
+                                <span class="title">
                                         <span class="deep-orange-text"><?= _e(_money($order['price'])) ?></span>
                                         <nobr>&bullet;
                                             <span
@@ -40,41 +43,64 @@
                                         </nobr>
                                     </span>
 
-                                <?php else : ?>
+                            <?php endif; ?>
 
-                                    <span class="title">
-                                        <span class="deep-orange-text"><?= _e(_money($order['price'])) ?></span>
-                                        <nobr>&bullet;
-                                            <span
-                                                class="blue-grey-text text-lighten-2"><?= _e($order['created']) ?></span>
-                                        </nobr>
-                                    </span>
+                            <p><?= _e($order['description']) ?></p>
 
-                                <?php endif; ?>
+                            <div class="secondary-content">
+                                <form data-form="execute-order"
+                                      action="<?= _e(router_get_path('orders', 'execute')) ?>" method="post">
+                                    <input type="hidden" name="id" value="<?= _e($order['id']) ?>">
+                                    <button type="submit"
+                                            class="btn-floating waves-effect waves-light transparent">
+                                        <i class="material-icons mdi-action-done grey-text text-darken-4"
+                                           title="Сделано!"></i></button>
+                                </form>
+                            </div>
+                        </li>
+                    <?php endforeach; ?>
 
-                                <p><?= _e($order['description']) ?></p>
-
-                                <div class="secondary-content">
-                                    <form data-form="execute-order"
-                                          action="<?= _e(router_get_path('orders', 'execute')) ?>" method="post">
-                                        <input type="hidden" name="id" value="<?= _e($order['id']) ?>">
-                                        <button type="submit"
-                                                class="btn-floating waves-effect waves-light transparent">
-                                            <i class="material-icons mdi-action-done grey-text text-darken-4"
-                                               title="Сделано!"></i></button>
-                                    </form>
-                                </div>
-                            </li>
-                        <?php endforeach; ?>
-
-                    <?php endif; ?>
                 </ul>
+
+                <script type="text/x-handlebars-template" id="new-fetched-order">
+                    <li class="collection-item avatar order-item animated bounce" id="order-item-{{order.id}}">
+                        {{#if order.customer.avatar}}
+                        <img src="{{order.customer.avatar}}" alt="{{order.customer.username}}" class="circle">
+                            <span class="title">{{order.customer.username}} &bullet;
+                                <span class="deep-orange-text">{{order.price_dollar}}</span>
+                                <nobr>&bullet;
+                                    <span class="blue-grey-text text-lighten-2">{{order.created}}</span>
+                                </nobr>
+                            </span>
+                        {{else}}
+                            <span class="title">
+                                <span class="deep-orange-text">{{order.price_dollar}}</span>
+                                <nobr>&bullet;
+                                    <span class="blue-grey-text text-lighten-2">{{order.created}}</span>
+                                </nobr>
+                            </span>
+                        {{/if}}
+                        <p>{{order.description}}</p>
+
+                        <div class="secondary-content">
+                            <form data-form="execute-order"
+                                  action="<?= _e(router_get_path('orders', 'execute')) ?>" method="post">
+                                <input type="hidden" name="id" value="{{order.id}}">
+                                <button type="submit"
+                                        class="btn-floating waves-effect waves-light transparent">
+                                    <i class="material-icons mdi-action-done grey-text text-darken-4"
+                                       title="Сделано!"></i></button>
+                            </form>
+                        </div>
+                    </li>
+                </script>
             </div>
         </div>
 
         <div class="row">
             <div class="col s12">
-                <form action="<?= _e(router_get_path('orders', 'list')) ?>" method="get">
+                <form action="<?= _e(router_get_path('orders', 'list')) ?>" method="get"
+                      id="go-to-older-orders-form">
                     <input type="hidden" name="from" value="<?= _e($next) ?>">
                     <input type="hidden" name="fromRand" value="<?= _e($nextRand) ?>">
 
