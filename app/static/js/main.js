@@ -104,7 +104,7 @@
                         .done(function (data, status, xhr) {
                             // добавленный заказ
                             if (data.createdOrder && !$.isEmptyObject(data.createdOrder)) {
-                                Materialize.toast('Заказ на сумму ' + data.createdOrder['price_dollar'] +
+                                Materialize.toast('Заказ на сумму ' + data.createdOrder.price_dollar +
                                     ' успешно добавлен', 6000);
 
                                 var orderHtml = orderTemplate({customer: currentUserInfo, order: data.createdOrder});
@@ -136,6 +136,8 @@
         }
 
         // форма исполнения заказа
+        var $ordersList = $('#order-list-fetched');
+
         var processExecuteForm = function () {
             var form = this;
             var $form = $(form);
@@ -177,16 +179,15 @@
             return false;
         };
 
-        $('form[data-form="execute-order"]').on('submit', processExecuteForm);
+        $ordersList.on('submit', 'form[data-form="execute-order"]', processExecuteForm);
 
         // форма перехода к более старым заказам
-        var $gotoForm = $('#go-to-older-orders-form');
+        var $fetchMoreForm = $('#go-to-older-orders-form');
 
-        if ($gotoForm.length) {
-            var $fetchedOrders = $('#order-list-fetched');
+        if ($fetchMoreForm.length) {
             var fetchedTemplate = Handlebars.compile($("#new-fetched-order").html());
 
-            $gotoForm.on('submit', function () {
+            $fetchMoreForm.on('submit', function () {
                 var form = this;
                 var $form = $(form);
                 var $fromField = $form.find('[name="from"]');
@@ -205,16 +206,12 @@
                         $fromRandField.val(data.nextRand);
 
                         // показываем полученные записи
-                        var fetched = [];
-                        $.each(data.orders, function (idx, order) {
-                            var item = fetchedTemplate({order: order});
-                            var $item = $(item);
-                            $item.find('[data-form="execute-order"]').on('submit', processExecuteForm);
-                            fetched.push($item);
+                        var fetched = $.map(data.orders, function (order) {
+                            return fetchedTemplate({order: order});
                         });
 
                         if (fetched.length) {
-                            $fetchedOrders.append(fetched);
+                            $ordersList.append(fetched);
                         }
                     })
                     .always(function (xhr, status) {
