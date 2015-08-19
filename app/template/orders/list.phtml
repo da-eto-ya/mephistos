@@ -50,6 +50,7 @@
                             <div class="secondary-content">
                                 <form data-form="execute-order"
                                       action="<?= _e(router_get_path('orders', 'execute')) ?>" method="post">
+                                    <input type="hidden" name="_csrf" value="<?= _e($order['_csrf']) ?>">
                                     <input type="hidden" name="id" value="<?= _e($order['id']) ?>">
                                     <button type="submit"
                                             class="btn-floating waves-effect waves-light transparent">
@@ -85,6 +86,7 @@
                         <div class="secondary-content">
                             <form data-form="execute-order"
                                   action="<?= _e(router_get_path('orders', 'execute')) ?>" method="post">
+                                <input type="hidden" name="_csrf" value="{{order._csrf}}">
                                 <input type="hidden" name="id" value="{{order.id}}">
                                 <button type="submit"
                                         class="btn-floating waves-effect waves-light transparent">

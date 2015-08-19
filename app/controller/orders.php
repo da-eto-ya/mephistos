@@ -45,6 +45,7 @@ function controller_orders_list()
         }
 
         $orders[$key]['price_dollar'] = billing_format_cents_as_dollars($order['price']);
+        $orders[$key]['_csrf'] = auth_get_csrf(['orders', 'execute', $order['id']]);
     }
 
     $lastOrder = $orders ? $orders[count($orders) - 1] : false;
@@ -163,21 +164,34 @@ function controller_orders_execute()
     $id = _p('id', 0, APP_PARAM_INT);
 
     if (!$id) {
+        // TODO: привести в порядок коды возврата
         return;
     }
 
-    $success = billing_order_execute($id, $user);
+    $success = false;
     $balance = false;
 
-    if ($success) {
-        $balance = repo_users_get_balance($user['id']);
+    if (auth_validate_csrf(_p('_csrf', ''), ['orders', 'execute', $id])) {
+        $success = billing_order_execute($id, $user);
+
+        if ($success) {
+            $balance = repo_users_get_balance($user['id']);
+        }
+
+        $error = $success ? '' : 'Не удалось исполнить заказ';
+    } else {
+        $error = 'Ошибка соединения.';
+    }
+
+    if (false !== $balance) {
+        $balance = billing_format_cents_as_dollars($balance);
     }
 
     if (request_is_ajax()) {
         response_json([
             'success' => $success,
-            'error' => $success ? '' : 'Не удалось исполнить заказ',
-            'balance' => (false !== $balance) ? billing_format_cents_as_dollars($balance) : false,
+            'error' => $error,
+            'balance' => $balance,
         ]);
     } else {
         response_redirect(router_get_path('orders', 'list'));
