@@ -34,7 +34,7 @@ function controller_login()
         $validateErrors = validate_fields($credentials, [
             'username' => [
                 ['required'],
-                ['max_length', 'params' => 255],
+                ['max_length', 'params' => APP_USER_USERNAME_MAXLENGTH],
                 ['regex', 'params' => '/^[a-zA-Z][-_a-zA-Z0-9]*$/'],
             ],
             'password' => [

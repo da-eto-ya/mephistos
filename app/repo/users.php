@@ -10,6 +10,12 @@ require_services('db', 'validate');
 const APP_ROLE_EXECUTOR = 0;
 /** Заказчик */
 const APP_ROLE_CUSTOMER = 1;
+/** Максимальная длина имени пользователя */
+const APP_USER_USERNAME_MAXLENGTH = 255;
+/** Максимальная длина пути аватара */
+const APP_USER_AVATAR_MAXLENGTH = 255;
+/** Максимальная длина хэшированного аватара пользователя */
+const APP_USER_PASSWORD_HASH_MAXLENGTH = 255;
 
 /**
  * Возвращает массив пользователей с данными id, индексированный этими id.
@@ -255,18 +261,18 @@ function repo_users_validate_fields(array $fields)
     return validate_fields($fields, [
         'username' => [
             ['required'],
-            ['max_length', 'params' => 255],
+            ['max_length', 'params' => APP_USER_USERNAME_MAXLENGTH],
             ['regex', 'params' => '/^[a-zA-Z][-_a-zA-Z0-9]*$/'],
         ],
         'password_hash' => [
             ['required'],
-            ['max_length', 'params' => 255],
+            ['max_length', 'params' => APP_USER_PASSWORD_HASH_MAXLENGTH],
         ],
         'balance' => [
             ['is_int'],
         ],
         'avatar' => [
-            ['max_length', 'params' => 255],
+            ['max_length', 'params' => APP_USER_AVATAR_MAXLENGTH],
         ],
         'role' => [
             ['is_int'],

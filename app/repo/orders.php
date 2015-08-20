@@ -10,7 +10,10 @@ require_services('db', 'validate', 'billing');
 const APP_ORDER_STATUS_NEW = 0;
 /** Исполненный заказ */
 const APP_ORDER_STATUS_EXECUTED = 1;
-
+/** Максимальная длина комментария */
+const APP_ORDER_COMMENT_MAXLENGTH = 665;
+/** Максимальная сумма заказа */
+const APP_ORDER_MAX_PRICE = 10000;
 /**
  * Список заказов с какой-либо даты.
  *
@@ -274,7 +277,7 @@ function repo_orders_validate_fields(array $fields)
         ],
         'description' => [
             ['required'],
-            ['max_length', 'params' => 665],
+            ['max_length', 'params' => APP_ORDER_COMMENT_MAXLENGTH],
         ],
         'customer_id' => [
             ['required'],

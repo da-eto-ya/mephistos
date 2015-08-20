@@ -96,11 +96,19 @@ function controller_orders_create()
                 'price' => [
                     ['required', 'msg' => 'Введите стоимость'],
                     ['regex', 'params' => '/^[0-9]+(?:[,\.][0-9]{2})?$/', 'msg' => 'Введите сумму в формате 123.45'],
-                    ['range', 'params' => [1, 10001], 'msg' => 'Введите сумму от 1 до 10000'],
+                    [
+                        'range',
+                        'params' => [1, APP_ORDER_MAX_PRICE + 1],
+                        'msg' => 'Введите сумму от 1 до ' + APP_ORDER_MAX_PRICE,
+                    ],
                 ],
                 'description' => [
                     ['required', 'msg' => 'Введите описание'],
-                    ['max_length', 'params' => 665, 'Длина описания не должна превышать 665 символов'],
+                    [
+                        'max_length',
+                        'params' => APP_ORDER_COMMENT_MAXLENGTH,
+                        'Длина описания не должна превышать ' . APP_ORDER_COMMENT_MAXLENGTH . ' символов',
+                    ],
                 ],
             ]);
 

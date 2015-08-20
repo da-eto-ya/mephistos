@@ -23,7 +23,7 @@
                         <div class="input-field col s12">
                             <input id="username" name="username" type="text"
                                    value="<?= _e($credentials['username']) ?>"
-                                   maxlength="255"
+                                   maxlength="<?= _e(APP_USER_USERNAME_MAXLENGTH) ?>"
                                    required>
                             <label for="username">Имя пользователя</label>
                         </div>
