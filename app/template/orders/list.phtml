@@ -26,7 +26,7 @@
                                 <span class="title">
                                         <?= _e($customer['username']) ?>
                                     &bullet;
-                                    <span class="deep-orange-text"><?= _e(_money($order['price'])) ?></span>
+                                    <span class="deep-orange-text"><?= _e($order['price_dollar']) ?></span>
                                         <nobr>&bullet;
                                             <span class="blue-grey-text text-lighten-2"
                                                   data-livestamp="<?= _e($order['_ts']) ?>"><?= _e($order['created']) ?></span>
@@ -36,7 +36,7 @@
                             <?php else : ?>
 
                                 <span class="title">
-                                        <span class="deep-orange-text"><?= _e(_money($order['price'])) ?></span>
+                                        <span class="deep-orange-text"><?= _e($order['price_dollar']) ?></span>
                                         <nobr>&bullet;
                                             <span
                                                 class="blue-grey-text text-lighten-2"><?= _e($order['created']) ?></span>

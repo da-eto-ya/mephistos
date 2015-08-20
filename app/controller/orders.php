@@ -39,7 +39,8 @@ function controller_orders_list()
             $orders[$key]['customer'] = [];
         }
 
-        $orders[$key]['price_dollar'] = billing_format_cents_as_dollars($order['price']);
+        // стоимость для заказчика показываем уже с учётом комиссии
+        $orders[$key]['price_dollar'] = billing_format_cents_as_dollars(billing_executor_revenue($order['price']));
         $orders[$key]['_ts'] = strtotime($order['created']);
         $orders[$key]['_csrf'] = auth_get_csrf(['orders', 'execute', $order['id']]);
     }

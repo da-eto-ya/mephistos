@@ -70,17 +70,17 @@ function billing_format_cents_as_dollars($cents)
 }
 
 /**
- * Расчёт вознаграждения пользователя и системы.
+ * Расчёт вознаграждения исполнителя и системы.
  *
- * @param int $value
+ * @param int $price
  * @param int $commission
  * @return array [сумма пользователя, награда системы]
  */
-function billing_split_revenue($value, $commission = null)
+function billing_split_revenue($price, $commission = null)
 {
-    $value = (int) $value;
+    $price = (int) $price;
 
-    if (!$value) {
+    if (!$price) {
         return [0, 0];
     }
 
@@ -91,18 +91,32 @@ function billing_split_revenue($value, $commission = null)
     }
 
     if ($commission <= 0) {
-        return [$value, 0];
+        return [$price, 0];
     }
 
     if ($commission >= 100) {
-        return [0, $value];
+        return [0, $price];
     }
 
     // TODO: здесь считаем в 64-битных числах, но на будущее — можно заменить всё на строки
-    $user = (int) bcdiv((string) ($value * (100 - $commission)), '100');
-    $system = $value - $user;
+    $executor = (int) bcdiv((string) ($price * (100 - $commission)), '100');
+    $system = $price - $executor;
 
-    return [$user, $system];
+    return [$executor, $system];
+}
+
+/**
+ * Получить сумму вознаграждения исполнителя.
+ *
+ * @param int  $price
+ * @param null $commission
+ * @return mixed
+ */
+function billing_executor_revenue($price, $commission = null)
+{
+    $result = billing_split_revenue($price, $commission);
+
+    return $result[0];
 }
 
 /**
@@ -149,16 +163,19 @@ function billing_order_execute($id, $executor)
     // TODO: по-хорошему, нужно где-то ещё иметь счёт системы, на который класть $systemProfit
 
     if (!$executorPaid || !$customerPaid) {
-        /*$orderCanceled = */repo_orders_cancel($order['id']);
+        /*$orderCanceled = */
+        repo_orders_cancel($order['id']);
         // TODO: log if false
 
         if ($executorPaid) {
-            /*$executorCanceled = */repo_users_sub_balance($executor['id'], $userProfit);
+            /*$executorCanceled = */
+            repo_users_sub_balance($executor['id'], $userProfit);
             // TODO: log if false
         }
 
         if ($customerPaid) {
-            /*$customerCanceled = */repo_users_sub_balance($customer['id'], $customerProfit);
+            /*$customerCanceled = */
+            repo_users_sub_balance($customer['id'], $customerProfit);
             // TODO: log if false
         }
 
