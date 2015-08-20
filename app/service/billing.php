@@ -98,8 +98,8 @@ function billing_split_revenue($value, $commission = null)
         return [0, $value];
     }
 
-    // TODO: для больших сумм можно использовать bcmath или gmp, чтобы не произошло переполнения при умножении
-    $user = intdiv($value * (100 - $commission), 100);
+    // TODO: здесь считаем в 64-битных числах, но на будущее — можно заменить всё на строки
+    $user = (int) bcdiv((string) ($value * (100 - $commission)), '100');
     $system = $value - $user;
 
     return [$user, $system];
