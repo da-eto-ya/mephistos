@@ -47,39 +47,75 @@
                 });
 
                 $validator.showErrors(err);
+            },
+            ajaxSubmit: function (form, success, before) {
+                success = success || function () {};
+                before = before || function () {};
+
+                return $(form).ajaxSubmit({
+                    beforeSubmit: before
+                }).data('jqxhr')
+                    .done(success)
+                    .always(function () {
+                        formHelper.stateNormal(form);
+                    });
+            }
+        };
+
+        // компонент уведомлений
+        var megaphone = {
+            info: function (text) {
+                Materialize.toast(text, 7000);
+            },
+            alert: function (text) {
+                Materialize.toast(text, 7000, 'red darken-2 text-white');
             }
         };
 
         // обработка ошибок ajax
-        // TODO: handle other + 390 (redirect) + beautiful messages about
         $(document).ajaxError(function (event, xhr, settings, error) {
             if (xhr.status === 0) {
-                // TODO
-                console.log('status === 0', event, xhr, settings, error);
+                megaphone.alert('Непредвиденная ошибка');
+                megaphone.info('Попробуйте обновить страницу');
             } else if (xhr.status == 390) {
                 if ($.type(xhr.responseJSON) === 'string') {
                     window.location = xhr.responseJSON;
                 } else {
-                    Materialize.toast('Попробуйте обновить страницу (F5)', 5000);
+                    megaphone.info('Попробуйте обновить страницу');
                 }
             } else if (xhr.status == 404) {
-                // TODO
-                console.log(404, event, xhr, settings, error);
+                megaphone.alert('Страница не найдена');
+                megaphone.info('Попробуйте обновить страницу');
+            } else if (xhr.status == 403) {
+                megaphone.alert('Доступ запрещён');
+                megaphone.info('Попробуйте перелогиниться');
+            } else if (400 <= xhr.status && xhr.status < 500) {
+                megaphone.alert('Запрос не обработан');
+                megaphone.info('Попробуйте обновить страницу');
+            } else if (xhr.status == 500) {
+                megaphone.alert('Ошибка сервера');
+                megaphone.info('Попробуйте ещё раз');
             } else if (xhr.status == 503) {
-                // TODO
-                console.log(503, event, xhr, settings, error);
+                megaphone.alert('Сервер на обслуживании');
+                megaphone.info('Заходите позже');
+            } else if (xhr.status == 504) {
+                megaphone.alert('Сервер не ответил');
+                megaphone.info('Попробуйте ещё раз');
+            } else if (500 <= xhr.status && xhr.status < 600) {
+                megaphone.alert('Ошибка сервера');
+                megaphone.info('Попробуйте обновить страницу');
             } else if (error === 'parsererror') {
-                // TODO
-                console.log('parsererror', event, xhr, settings, error);
+                megaphone.alert('Ошибка браузера');
+                megaphone.info('Попробуйте обновить страницу');
             } else if (error === 'timeout') {
-                // TODO
-                console.log('timeout', event, xhr, settings, error);
+                megaphone.alert('Сервер не ответил');
+                megaphone.info('Попробуйте ещё раз');
             } else if (error === 'abort') {
-                // TODO
-                console.log('abort', event, xhr, settings, error);
+                megaphone.alert('Сервер оборвал связь');
+                megaphone.info('Попробуйте ещё раз');
             } else {
-                // TODO
-                console.log('uncaught exception', event, xhr, settings, error);
+                megaphone.alert('Произошло что-то странное');
+                megaphone.info('Попробуйте ещё раз');
             }
         });
 
@@ -122,14 +158,15 @@
                                 formHelper.stateAjax(form);
                             }
                         }).data('jqxhr')
-                            .done(function (data, status, xhr) {
+                            .done(function (data) {
                                 // добавленный заказ
                                 if (data.createdOrder && !$.isEmptyObject(data.createdOrder)) {
-                                    // TODO: перенести toast и прочие подобные в компонент уведомлений
-                                    Materialize.toast('Заказ на сумму ' + data.createdOrder.price_dollar +
-                                        ' успешно добавлен', 6000);
+                                    megaphone.info('Заказ на сумму ' + data.createdOrder.price_dollar + ' успешно добавлен');
 
-                                    var orderHtml = orderTemplate({customer: currentUserInfo, order: data.createdOrder});
+                                    var orderHtml = orderTemplate({
+                                        customer: currentUserInfo,
+                                        order: data.createdOrder
+                                    });
                                     $createdOrders.prepend(orderHtml);
                                 }
 
@@ -146,11 +183,11 @@
                                 // ошибки не уровня формы
                                 if (data.createErrors && !$.isEmptyObject(data.createErrors)) {
                                     $.each(data.createErrors, function (idx, err) {
-                                        Materialize.toast('Ошибка: ' + err, 10000);
+                                        megaphone.alert(err);
                                     });
                                 }
                             })
-                            .always(function (xhr, status) {
+                            .always(function () {
                                 formHelper.stateNormal(form);
                             });
                     }
@@ -162,41 +199,32 @@
         (function () {
             $ordersList.on('submit', 'form[data-form="execute-order"]', function () {
                 var form = this;
-                var $form = $(form);
                 var id = $(form).find('[name="id"]').val();
                 var $li = $('#order-item-' + id);
 
-                $form.ajaxSubmit({
-                    beforeSubmit: function () {
-                        formHelper.stateAjax(form);
+                var executeSuccess = function (data) {
+                    if (data.success) {
+                        if (typeof data.balance !== 'undefined' && data.balance !== false) {
+                            megaphone.info('Успешно! Ваш баланс: ' + data.balance);
+                            $balanceHandler.text(data.balance);
+                        } else {
+                            megaphone.alert('Не удалось получить баланс');
+                        }
+
+                        if ($li.length) {
+                            $li.find(':submit').remove();
+                            $li.fadeOut(200, function () {
+                                $(this).remove();
+                            });
+                        }
                     }
-                }).data('jqxhr')
-                    .done(function (data, status, xhr) {
-                        console.log(data);
 
-                        if (data.success) {
-                            if (typeof data.balance !== 'undefined' && data.balance !== false) {
-                                Materialize.toast('Успешно! Ваш баланс: ' + data.balance, 6000);
-                                $balanceHandler.text(data.balance);
-                            } else {
-                                Materialize.toast('Не удалось получить баланс', 6000);
-                            }
+                    if (data.error) {
+                        megaphone.error(data.error);
+                    }
+                };
 
-                            if ($li.length) {
-                                $li.find(':submit').remove();
-                                $li.fadeOut(200, function () {
-                                    $(this).remove();
-                                });
-                            }
-                        }
-
-                        if (data.error) {
-                            Materialize.toast(data.error, 6000);
-                        }
-                    })
-                    .always(function (xhr, status) {
-                        formHelper.stateNormal(form);
-                    });
+                formHelper.ajaxSubmit(form, executeSuccess);
 
                 return false;
             });
@@ -218,9 +246,7 @@
                             formHelper.stateAjax(form);
                         }
                     }).data('jqxhr')
-                        .done(function (data, status, xhr) {
-                            console.log(data);
-
+                        .done(function (data) {
                             // обновляем данные полей для перехода к следующим записям
                             $fromField.val(data.next);
                             $fromRandField.val(data.nextRand);
@@ -234,7 +260,7 @@
                                 $ordersList.append(fetched);
                             }
                         })
-                        .always(function (xhr, status) {
+                        .always(function () {
                             formHelper.stateNormal(form);
                         });
 
@@ -258,13 +284,13 @@
                                 formHelper.stateAjax(form);
                             }
                         }).data('jqxhr')
-                            .done(function (data, status, xhr) {
+                            .done(function (data) {
                                 // ошибки реквизитов
                                 if (data.error) {
                                     $errorRow.text(data.error);
                                 }
                             })
-                            .always(function (xhr, status) {
+                            .always(function () {
                                 formHelper.stateNormal(form);
                             });
                     }

@@ -83,8 +83,8 @@ function controller_orders_create()
 
     if (request_is_post()) {
         if (!auth_validate_csrf(_p('_csrf', ''), ['orders', 'create'])) {
-            $createErrors[] = 'Похоже, у вас закончилась сессия или ваш аккаунт пытаются использовать мошенники.';
-            $createErrors[] = 'Для корректной работы с сайтом обновите страницу или перелогиньтесь.';
+            $createErrors[] = 'Похоже, у вас закончилась сессия';
+            $createErrors[] = 'Обновите страницу или перелогиньтесь';
             // TODO: подумать, может, ввести код ошибки для ajax и обрабатывать csrf отдельно
         } else {
             $order['price'] = _p('price', 0, APP_PARAM_FLOAT);
@@ -117,7 +117,7 @@ function controller_orders_create()
                         'description' => '',
                     ];
                 } else {
-                    $createErrors = ['Не удалось добавить заказ. Попробуйте позже.'];
+                    $createErrors[] = 'Не удалось добавить заказ';
                 }
             }
         }
