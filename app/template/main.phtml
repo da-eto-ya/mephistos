@@ -21,7 +21,6 @@ $user = auth_get_current_user();
 
                 <?php if ($user) : ?>
 
-                    <!-- TODO: check role and select url -->
                     <a href="<?= _e(auth_get_default_url($user)) ?>" title="Продолжить работу"
                        class="btn-large waves-effect waves-light deep-orange">Продолжить работу</a>
 
