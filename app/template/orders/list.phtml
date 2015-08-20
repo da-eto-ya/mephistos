@@ -28,8 +28,8 @@
                                     &bullet;
                                     <span class="deep-orange-text"><?= _e(_money($order['price'])) ?></span>
                                         <nobr>&bullet;
-                                            <span
-                                                class="blue-grey-text text-lighten-2"><?= _e($order['created']) ?></span>
+                                            <span class="blue-grey-text text-lighten-2"
+                                                  data-livestamp="<?= _e($order['_ts']) ?>"><?= _e($order['created']) ?></span>
                                         </nobr>
                                     </span>
 
@@ -70,14 +70,16 @@
                             <span class="title">{{order.customer.username}} &bullet;
                                 <span class="deep-orange-text">{{order.price_dollar}}</span>
                                 <nobr>&bullet;
-                                    <span class="blue-grey-text text-lighten-2">{{order.created}}</span>
+                                    <span class="blue-grey-text text-lighten-2"
+                                          data-livestamp="{{order._ts}}">{{order.created}}</span>
                                 </nobr>
                             </span>
                         {{else}}
                             <span class="title">
                                 <span class="deep-orange-text">{{order.price_dollar}}</span>
                                 <nobr>&bullet;
-                                    <span class="blue-grey-text text-lighten-2">{{order.created}}</span>
+                                    <span class="blue-grey-text text-lighten-2"
+                                          data-livestamp="{{order._ts}}">{{order.created}}</span>
                                 </nobr>
                             </span>
                         {{/if}}

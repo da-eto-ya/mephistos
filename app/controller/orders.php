@@ -31,7 +31,7 @@ function controller_orders_list()
     $orders = repo_orders_get_list($limit, $from, $fromRand);
     $customers = repo_users_get_by_ids(array_column($orders, 'customer_id'));
 
-    // TODO: move inline one model to another to helper or repo
+    // TODO: move to helper or repo
     foreach ($orders as $key => $order) {
         if ($order['customer_id'] && isset($customers[$order['customer_id']])) {
             $orders[$key]['customer'] = array_restrict($customers[$order['customer_id']], ['id', 'username', 'avatar']);
@@ -40,6 +40,7 @@ function controller_orders_list()
         }
 
         $orders[$key]['price_dollar'] = billing_format_cents_as_dollars($order['price']);
+        $orders[$key]['_ts'] = strtotime($order['created']);
         $orders[$key]['_csrf'] = auth_get_csrf(['orders', 'execute', $order['id']]);
     }
 
