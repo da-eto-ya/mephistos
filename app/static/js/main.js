@@ -49,8 +49,10 @@
                 $validator.showErrors(err);
             },
             ajaxSubmit: function (form, success, before) {
-                success = success || function () {};
-                before = before || function () {};
+                success = success || function () {
+                    };
+                before = before || function () {
+                    };
 
                 return $(form).ajaxSubmit({
                     beforeSubmit: before
@@ -77,9 +79,11 @@
             if (xhr.status === 0) {
                 megaphone.alert('Непредвиденная ошибка');
                 megaphone.info('Попробуйте обновить страницу');
-            } else if (xhr.status == 390) {
+            } else if (xhr.status == 418) {
                 if ($.type(xhr.responseJSON) === 'string') {
-                    window.location = xhr.responseJSON;
+                    setTimeout(function () {
+                        document.location.href = xhr.responseJSON;
+                    }, 500);
                 } else {
                     megaphone.info('Попробуйте обновить страницу');
                 }

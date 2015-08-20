@@ -6,9 +6,6 @@
 require_once __DIR__ . '/../require.php';
 require_services('request');
 
-// Специальный код для редиректа с помощью JS
-const APP_HTTP_X_JSON_REDIRECT = 390;
-
 // Некоторые стандартные коды
 const APP_HTTP_OK = 200;
 
@@ -22,12 +19,14 @@ const APP_HTTP_UNAUTHORIZED = 401;
 const APP_HTTP_FORBIDDEN = 403;
 const APP_HTTP_NOT_FOUND = 404;
 const APP_HTTP_METHOD_NOT_ALLOWED = 405;
-const APP_HTTP_I_AM_A_TEAPOT = 418;
 
 const APP_HTTP_INTERNAL_SERVER_ERROR = 500;
 const APP_HTTP_INTERNAL_NOT_IMPLEMENTED = 501;
 const APP_HTTP_INTERNAL_BAD_GATEWAY = 502;
 const APP_HTTP_INTERNAL_SERVICE_UNAVAILABLE = 503;
+
+// Специальный код для редиректа с помощью JS
+const APP_HTTP_X_JSON_REDIRECT = 418; // I'm a Teapot
 
 /**
  * Посылаем ответ клиенту.
