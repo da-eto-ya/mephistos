@@ -34,12 +34,7 @@ function controller_orders_list()
     // TODO: move inline one model to another to helper or repo
     foreach ($orders as $key => $order) {
         if ($order['customer_id'] && isset($customers[$order['customer_id']])) {
-            $customer = $customers[$order['customer_id']];
-            $orders[$key]['customer'] = [
-                'id' => $customer['id'],
-                'username' => $customer['username'],
-                'avatar' => $customer['avatar'],
-            ];
+            $orders[$key]['customer'] = array_restrict($customers[$order['customer_id']], ['id', 'username', 'avatar']);
         } else {
             $orders[$key]['customer'] = [];
         }

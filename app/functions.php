@@ -19,3 +19,15 @@ if (!function_exists('intdiv')) {
         return ($numerator - $numerator % $divisor) / $divisor;
     }
 }
+
+/**
+ * Возвращает массив, содержащий только указанные во втором параметре ключи.
+ *
+ * @param array $array входной хэш
+ * @param array $keys значения ключей в плоском массиве
+ * @return array массив, содержащий только указанные во втором параметре ключи
+ */
+function array_restrict($array, $keys)
+{
+    return array_intersect_key($array, array_fill_keys(array_values($keys), true));
+}
