@@ -21,7 +21,7 @@ function controller_login()
     $user = auth_get_current_user();
 
     if ($user) {
-        response_redirect(auth_get_default_url_for_user($user));
+        response_redirect(auth_get_default_url($user));
 
         return;
     }
@@ -43,22 +43,26 @@ function controller_login()
         ]);
 
         if (empty($validateErrors) && false !== ($user = auth_find_user($credentials))) {
-            $error = '';
-
             // если изменился алгоритм или параметры шифрования, то обновляем хэш
             if (security_password_needs_rehash($user['password_hash'])) {
                 auth_rehash_user_password($user['id'], $credentials['password']);
             }
 
             auth_start_authorized_session($user['id']);
-            response_redirect(auth_get_default_url_for_user($user));
+            response_redirect(auth_get_default_url($user));
 
             return;
         }
     }
 
-    response_send(template_render('login', [
-        'credentials' => $credentials,
-        'error' => $error,
-    ]));
+    if (request_is_ajax()) {
+        response_json([
+            'error' => $error,
+        ]);
+    } else {
+        response_send(template_render('login', [
+            'credentials' => $credentials,
+            'error' => $error,
+        ]));
+    }
 }

@@ -10,22 +10,21 @@
 <main>
     <div class="container">
         <div class="row center form-container">
-            <form action="<?= _e(router_get_path('login')) ?>" method="post"
+            <form action="<?= _e(router_get_path('login')) ?>" method="post" id="login-form"
                   class="col s12 m8 offset-m2 l6 offset-l3 card hoverable login-form">
                 <div class="form-inner">
                     <h3>Войти</h3>
 
-                    <?php if (!empty($error)) : ?>
-                        <?= template_render('_elements/error_row', ['errors' => [$error]]) ?>
-                    <?php endif; ?>
+                    <div class="row row-login-error">
+                        <div class="col s12 red-text" data-login-error="login-error"><?= _e($error) ?></div>
+                    </div>
 
                     <div class="row">
                         <div class="input-field col s12">
                             <input id="username" name="username" type="text"
                                    value="<?= _e($credentials['username']) ?>"
                                    maxlength="255"
-                                   required
-                                   class="validate">
+                                   required>
                             <label for="username">Имя пользователя</label>
                         </div>
                     </div>
@@ -34,8 +33,7 @@
                         <div class="input-field col s12">
                             <input id="password" name="password" type="password"
                                    value="<?= _e($credentials['password']) ?>"
-                                   required
-                                   class="validate">
+                                   required>
                             <label for="password">Пароль</label>
                         </div>
                     </div>
@@ -46,6 +44,14 @@
                                     class="col s12 waves-effect waves-light btn-large deep-orange darken-4">
                                 Войти
                             </button>
+                        </div>
+                    </div>
+
+                    <div class="row row-progress-bottom">
+                        <div class="col s12 progress-container" data-progress="progress">
+                            <div class="progress deep-orange lighten-4">
+                                <div class="indeterminate deep-orange darken-4"></div>
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -14,7 +14,7 @@ function controller_main()
     $user = auth_get_current_user();
 
     if ($user) {
-        $path = auth_get_default_url_for_user($user);
+        $path = auth_get_default_url($user);
 
         if ($path && $path !== '/') {
             response_redirect($path);

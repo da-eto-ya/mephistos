@@ -237,7 +237,7 @@ function auth_get_current_user($sessionData = null, $force = false)
  * @param array|null $user
  * @return string
  */
-function auth_get_default_url_for_user(array $user = null)
+function auth_get_default_url(array $user = null)
 {
     if (!$user || !isset($user['role'])) {
         return '/';
@@ -259,7 +259,7 @@ function auth_get_default_url_for_user(array $user = null)
  * @param array $roles список разрешённых ролей
  * @return bool
  */
-function auth_is_authorized_access_allowed(array $user = null, array $roles = [])
+function auth_user_has_role(array $user = null, array $roles = [])
 {
     if (!$user || !isset($user['role'])) {
         return false;

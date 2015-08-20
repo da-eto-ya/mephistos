@@ -162,25 +162,18 @@ function controller_orders_execute()
     }
 
     $id = _p('id', 0, APP_PARAM_INT);
-
-    if (!$id) {
-        // TODO: привести в порядок коды возврата
-        return;
-    }
-
     $success = false;
     $balance = false;
 
-    if (auth_validate_csrf(_p('_csrf', ''), ['orders', 'execute', $id])) {
-        $success = billing_order_execute($id, $user);
-
-        if ($success) {
-            $balance = repo_users_get_balance($user['id']);
-        }
-
-        $error = $success ? '' : 'Не удалось исполнить заказ';
-    } else {
+    if (!$id) {
         $error = 'Ошибка соединения.';
+    } else if (!auth_validate_csrf(_p('_csrf', ''), ['orders', 'execute', $id])) {
+        // TODO: отдельный код для csrf
+        $error = 'Ошибка соединения.';
+    } else {
+        $success = billing_order_execute($id, $user);
+        $balance = $success ? repo_users_get_balance($user['id']) : false;
+        $error = $success ? '' : 'Не удалось исполнить заказ';
     }
 
     if (false !== $balance) {
@@ -194,7 +187,7 @@ function controller_orders_execute()
             'balance' => $balance,
         ]);
     } else {
-        response_redirect(router_get_path('orders', 'list'));
+        response_location(router_get_path('orders', 'list'));
     }
 }
 
@@ -210,17 +203,12 @@ function controller_orders_execute()
 function __controller_orders_deny_access($user, $role)
 {
     if (!$user) {
-        // TODO: create helper for ajax redirects
-        if (request_is_ajax()) {
-            response_json(['redirect' => '/'], 390);
-        } else {
-            response_redirect('/');
-        }
+        response_redirect('/');
 
         return true;
     }
 
-    if (!auth_is_authorized_access_allowed($user, [$role])) {
+    if (!auth_user_has_role($user, [$role])) {
         response_forbidden();
 
         return true;
