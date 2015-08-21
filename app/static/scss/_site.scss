@@ -1,0 +1,257 @@
+// Общие вещи
+body {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+}
+
+main {
+  flex: 1 0 auto;
+}
+
+.material-icons {
+  font-size: inherit;
+  line-height: inherit;
+}
+
+// Промо-блок
+.promo-block {
+  i {
+    margin: 0 0 1rem 0;
+    font-size: 7rem;
+    display: block;
+  }
+}
+
+// Контакты
+.contacts {
+  .material-icons {
+    line-height: 1.0;
+    font-size: 0.9rem;
+    width: 0.9rem;
+    margin: 0.1rem 0.1rem 0 0;
+  }
+}
+
+// Лого
+.brand-logo {
+  line-height: 1.0;
+
+  img {
+    padding-top: 6px;
+  }
+}
+
+// Формы
+.form-container {
+  min-height: 20rem;
+  margin: 3rem 0 1rem;
+
+  form {
+    .form-inner {
+      margin: 2rem;
+    }
+  }
+}
+
+form.login-form, form.logout-form {
+  label:after {
+    width: 17rem;
+  }
+
+  .row-login-error {
+    margin-bottom: .5rem;
+    margin-top: -.5rem;
+  }
+
+  .form-inner {
+    margin-bottom: .1rem;
+  }
+}
+
+form.order-form {
+  label:after {
+    width: 20rem;
+  }
+}
+
+// Список заказов
+ul.order-list {
+  .collection-item.avatar {
+    padding: 10px 69px 10px 78px;
+
+    &:hover {
+      background: #f5f5f5;
+
+      button {
+        background-color: #ff5722 !important;
+
+        i {
+          color: white !important;
+        }
+      }
+    }
+
+    .circle {
+      width: 48px;
+      height: 48px;
+    }
+  }
+}
+
+ul.order-list-created {
+  padding-top: 30px;
+  border: none;
+}
+
+// Аватар в строке навигации
+.nav-avatar {
+  height: 48px;
+  width: auto;
+  display: block;
+  margin: 8px;
+}
+
+// Строка баланса
+div.nav-balance {
+  font-size: 1rem;
+  display: block;
+  padding: 0 15px;
+
+  i {
+    font-size: 1.4rem;
+    line-height: 56px;
+    height: 56px;
+    margin: 0;
+  }
+}
+
+@media only screen and (min-width: 601px) {
+  div.nav-balance i {
+    line-height: 64px;
+    height: 64px;
+  }
+}
+
+@media only screen and (min-width: 992px) {
+  div.nav-balance i {
+    line-height: 60px;
+    height: 64px;
+  }
+}
+
+@media only screen and (min-width: 1200px) {
+  div.nav-balance i {
+    line-height: 62px;
+    height: 64px;
+  }
+}
+
+// Кнопка выхода
+button.nav-logout {
+  display: block;
+  padding: 0 15px;
+  height: 56px;
+  line-height: 56px;
+  text-transform: none;
+  font-size: 1rem;
+  color: #fff;
+
+  &:focus {
+    border: none;
+    box-shadow: none;
+    outline: 0;
+    background-color: transparent;
+  }
+}
+
+@media only screen and (min-width: 601px) {
+  button.nav-logout {
+    height: 64px;
+    line-height: 64px;
+  }
+}
+
+.side-nav button.nav-logout {
+  color: #343434;
+  width: 100%;
+  text-align: left;
+}
+
+.input-field {
+  label.invalid, label.invalid.active {
+    position: static;
+    font-size: 1rem;
+    color: red;
+    margin-left: 0;
+  }
+}
+
+.form-container form.order-form .form-inner {
+  margin-bottom: .1rem;
+}
+
+.row-progress-bottom {
+  margin-bottom: 0;
+  margin-top: -20px;
+
+  .progress-container {
+    visibility: hidden;
+  }
+}
+
+// Анимация
+.animated {
+  -webkit-animation-duration: 1s;
+  animation-duration: 1s;
+  -webkit-animation-fill-mode: both;
+  animation-fill-mode: both;
+}
+
+@-webkit-keyframes bounce {
+  from, 20%, 53%, 80%, 100% {
+    animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
+    transform: translate3d(0, 0, 0);
+  }
+
+  40%, 43% {
+    animation-timing-function: cubic-bezier(0.755, 0.050, 0.855, 0.060);
+    transform: translate3d(0, -30px, 0);
+  }
+
+  70% {
+    animation-timing-function: cubic-bezier(0.755, 0.050, 0.855, 0.060);
+    transform: translate3d(0, -15px, 0);
+  }
+
+  90% {
+    -webkit-transform: translate3d(0, -4px, 0);
+    transform: translate3d(0, -4px, 0);
+  }
+}
+
+@keyframes bounce {
+  from, 20%, 53%, 80%, 100% {
+    animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
+    transform: translate3d(0, 0, 0);
+  }
+
+  40%, 43% {
+    animation-timing-function: cubic-bezier(0.755, 0.050, 0.855, 0.060);
+    transform: translate3d(0, -30px, 0);
+  }
+
+  70% {
+    animation-timing-function: cubic-bezier(0.755, 0.050, 0.855, 0.060);
+    transform: translate3d(0, -15px, 0);
+  }
+
+  90% {
+    transform: translate3d(0, -4px, 0);
+  }
+}
+
+.bounce {
+  animation-name: bounce;
+  transform-origin: center bottom;
+}

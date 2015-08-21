@@ -16,6 +16,10 @@
     "gulp-rename": "^1.2.2",
     "gulp-ruby-sass": "^1.0.5",
     "gulp-uglify": "^1.2.0",
-    "materialize-css": "https://github.com/Dogfalo/materialize/archive/v0.97.0.tar.gz"
+    "handlebars": "^3.0.3",
+    "jquery-form": "^3.50.0",
+    "jquery-validation": "^1.14.0",
+    "materialize-css": "https://github.com/Dogfalo/materialize/archive/v0.97.0.tar.gz",
+    "moment": "^2.10.6"
   }
 }
