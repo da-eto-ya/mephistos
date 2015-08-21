@@ -26,7 +26,7 @@ function auth_config(array $config = null)
 
     if (null !== $config) {
         foreach (['secret_key', 'cookie', 'domain'] as $key) {
-            if (isset($config[$key]) && !empty((string) $_config[$key])) {
+            if (isset($config[$key]) && !empty((string) $config[$key])) {
                 $_config[$key] = (string) $config[$key];
             }
         }
