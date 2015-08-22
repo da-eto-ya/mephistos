@@ -165,7 +165,7 @@ function auth_start_authorized_session($uid)
  */
 function auth_stop_authorized_session()
 {
-    return response_remove_cookie(auth_config()['cookie']);
+    return response_remove_cookie(auth_config()['cookie'], '/', auth_config()['domain']);
 }
 
 /**

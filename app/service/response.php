@@ -147,9 +147,9 @@ function response_write_cookie(
 /**
  * Удалить cookie с данным именем.
  *
- * @param string $name
- * @param string $path
- * @param null   $domain
+ * @param string      $name
+ * @param string      $path
+ * @param string|null $domain
  * @return bool
  */
 function response_remove_cookie($name, $path = '/', $domain = null)
