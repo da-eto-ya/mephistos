@@ -16,6 +16,7 @@ return [
             'login',
             'logout',
             'orders',
+            'admin',
             '' => 'main',
         ],
     ],

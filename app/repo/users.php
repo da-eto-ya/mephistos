@@ -10,6 +10,9 @@ require_services('db', 'validate');
 const APP_ROLE_EXECUTOR = 0;
 /** Заказчик */
 const APP_ROLE_CUSTOMER = 1;
+/** Админ */
+const APP_ROLE_ADMIN = 2;
+
 /** Максимальная длина имени пользователя */
 const APP_USER_USERNAME_MAXLENGTH = 255;
 /** Максимальная длина пути аватара */
@@ -276,7 +279,8 @@ function repo_users_validate_fields(array $fields)
         ],
         'role' => [
             ['is_int'],
-            ['in_array', 'params' => [[APP_ROLE_EXECUTOR, APP_ROLE_CUSTOMER]]],
+            // TODO: move all roles to some external array
+            ['in_array', 'params' => [[APP_ROLE_EXECUTOR, APP_ROLE_CUSTOMER, APP_ROLE_ADMIN]]],
         ],
         'created' => [
             ['db_datetime'],

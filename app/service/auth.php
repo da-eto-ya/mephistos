@@ -247,6 +247,7 @@ function auth_get_default_url(array $user = null)
     $urls = [
         APP_ROLE_EXECUTOR => router_get_path('orders', 'list'),
         APP_ROLE_CUSTOMER => router_get_path('orders', 'create'),
+        APP_ROLE_ADMIN => router_get_path('admin', ''),
     ];
 
     return isset($urls[$user['role']]) ? $urls[$user['role']] : '';
