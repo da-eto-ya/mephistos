@@ -67,5 +67,10 @@ return [
     // биллинг
     'billing' => [
         'commission' => 13,
-    ]
+    ],
+    // различные прочие настройки
+    'app_settings' => [
+        // Google Analytics
+        'ga' => getenv('OPENSHIFT_APP_NAME') ? true : false,
+    ],
 ];

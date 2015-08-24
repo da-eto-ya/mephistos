@@ -13,7 +13,7 @@ require_services('db', 'log', 'router', 'request', 'response', 'template', 'secu
  */
 function app_run(array $config)
 {
-    // конфигурируем модули
+    // конфигурируем модули и настройки
     $configurableModules = [
         'log' => 'log_config',
         'router' => 'router_config',
@@ -22,6 +22,8 @@ function app_run(array $config)
         'security' => 'security_config',
         'auth' => 'auth_config',
         'billing' => 'billing_config',
+        // настройки
+        'app_settings' => 'app_settings',
     ];
 
     foreach ($configurableModules as $key => $callable) {
@@ -54,4 +56,25 @@ function app_run(array $config)
 
     // дальше всё решает контроллер
     call_user_func($route['callable'], ...$route['params']);
+}
+
+/**
+ * Различные дополнительные настройки приложения
+ *
+ * @param array|null $config
+ * @return mixed
+ */
+function app_settings(array $config = null)
+{
+    static $_config = [
+        'ga' => false,
+    ];
+
+    if (null !== $config) {
+        if (isset($config['ga'])) {
+            $_config['ga'] = (bool) $config['ga'];
+        }
+    }
+
+    return $_config;
 }
