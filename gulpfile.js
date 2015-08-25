@@ -45,7 +45,6 @@ gulp.task('scripts', function () {
     ])
         .pipe(jshint())
         .pipe(jshint.reporter('default'))
-        .pipe(concat('main.js'))
         .pipe(rename({suffix: '.min'}))
         .pipe(uglify().on('error', function (e) {
             console.log(e.message);
@@ -90,7 +89,14 @@ gulp.task('libs', function () {
         conf.paths.moment + 'locale/ru.js',
         conf.paths.form + 'jquery.form.js',
         conf.paths.validation + 'dist/jquery.validate.js',
-        conf.paths.validation + 'dist/localization/messages_ru.js'
+        conf.paths.validation + 'dist/localization/messages_ru.js',
+
+        conf.paths.src + 'js/vendor/livestamp.min.js',
+
+        conf.paths.src + 'js/common/megaphone.js',
+        conf.paths.src + 'js/common/ajax.js',
+        conf.paths.src + 'js/common/elems.js',
+        conf.paths.src + 'js/common/forms.js'
     ])
         .pipe(concat('lib.js'))
         .pipe(rename({suffix: '.min'}))

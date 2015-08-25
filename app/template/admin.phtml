@@ -1,6 +1,6 @@
 <?php
-/** @var array $credentials форма логина */
-/** @var string $error сообщение при логине */
+/** @var array $commission комиссия */
+/** @var string $errors сообщения об ошибках */
 ?><!doctype html>
 <html lang="ru">
 <?= template_render('_elements/head', ['heading' => 'Login']); ?>
@@ -9,13 +9,57 @@
 
 <main>
     <div class="container">
+        <div class="row center">
+            <h2>Настройки системы</h2>
+        </div>
+
         <div class="row center form-container">
-            <h2>Админка</h2>
-            <!-- TODO -->
+            <form action="<?= _e(router_get_path('admin')) ?>" method="post"
+                  id="settings-commission-form"
+                  class="col s12 m10 offset-m1 card hoverable">
+                <?= _csrf_hidden(['admin']) ?>
+                <div class="form-inner">
+                    <h3>Комиссия</h3>
+
+                    <div class="row">
+                        <div class="input-field col s12">
+                            <i class="material-icons prefix mdi-editor-attach-money"></i>
+                            <input id="commission" name="commission"
+                                   value="<?= _e($commission) ?>"
+                                   type="number" min="0" max="100" step="1"
+                                   required>
+
+                            <?= template_render('_elements/errors_label', [
+                                'for' => 'commission',
+                                'errors' => !empty($errors) ? $errors : [],
+                            ]) ?>
+
+                            <label for="commission">Комиссия системы (в процентах)</label>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="input-field col s12">
+                            <button type="submit"
+                                    class="col s12 waves-effect waves-light btn-large deep-orange darken-4">
+                                Сохранить
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="row row-progress-bottom">
+                        <div class="col s12 progress-container" data-progress="progress">
+                            <div class="progress deep-orange lighten-4">
+                                <div class="indeterminate deep-orange darken-4"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
         </div>
     </div>
 </main>
 
-<?= template_render('_elements/footer'); ?>
+<?= template_render('_elements/footer', ['admin' => true]); ?>
 </body>
 </html>

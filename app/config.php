@@ -64,10 +64,6 @@ return [
         'domain' => getenv('OPENSHIFT_APP_NAME') ? '.mephistos.da-eto.info' : '.mephistos.loc',
         'expire' => 86400, // 1d
     ],
-    // биллинг
-    'billing' => [
-        'commission' => 13,
-    ],
     // различные прочие настройки
     'app_settings' => [
         // Google Analytics

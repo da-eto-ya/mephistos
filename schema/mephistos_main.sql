@@ -11,3 +11,12 @@ CREATE TABLE users (
   DEFAULT CHARSET = utf8
   DEFAULT COLLATE utf8_general_ci;
 CREATE UNIQUE INDEX name_index ON users (username);
+
+CREATE TABLE settings
+(
+  name VARCHAR(255) PRIMARY KEY NOT NULL,
+  value LONGTEXT NOT NULL
+)
+  ENGINE = InnoDB
+  DEFAULT CHARSET = utf8
+  DEFAULT COLLATE utf8_general_ci;

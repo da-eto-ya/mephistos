@@ -4,30 +4,10 @@
  */
 
 require_once __DIR__ . '/../require.php';
-require_repos('users', 'orders');
+require_repos('users', 'orders', 'settings');
 
-/**
- * Устанавливает или возвращает настройки биллинга.
- *
- * @param array|null $config массив для установки или null для возврата ранее сохранённого значения
- * @return array
- */
-function billing_config(array $config = null)
-{
-    static $_config = [
-        'commission' => 13,
-    ];
-
-    if (null !== $config) {
-        if (isset($config['commission']) && is_int($config['commission'])
-            && 0 <= $config['commission'] && $config['commission'] <= 100
-        ) {
-            $_config['commission'] = $config['commission'];
-        }
-    }
-
-    return $_config;
-}
+/** Комиссия по умолчанию */
+const APP_DEFAULT_COMMISSION = 13;
 
 /**
  * Конвертирует значение в долларах в центы.
@@ -85,7 +65,7 @@ function billing_split_revenue($price, $commission = null)
     }
 
     if (null === $commission) {
-        $commission = billing_config()['commission'];
+        $commission = billing_get_commission();
     } else {
         $commission = (int) $commission;
     }
@@ -183,4 +163,42 @@ function billing_order_execute($id, $executor)
     }
 
     return true;
+}
+
+/**
+ * Комиссия системы в процентах.
+ *
+ * @param bool $force
+ * @return int
+ */
+function billing_get_commission($force = false)
+{
+    static $_commission = null;
+
+    if (null === $_commission || $force) {
+        $_commission = repo_settings_get('commission');
+
+        if (null === $_commission) {
+            $_commission = APP_DEFAULT_COMMISSION;
+        }
+    }
+
+    return (int) $_commission;
+}
+
+/**
+ * Установка комиссии.
+ *
+ * @param int $commission
+ * @return bool
+ */
+function billing_set_commission($commission)
+{
+    $commission = (int) $commission;
+
+    if ($commission < 0 || $commission > 100) {
+        return false;
+    }
+
+    return (bool) repo_settings_set('commission', $commission);
 }

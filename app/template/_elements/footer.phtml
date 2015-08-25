@@ -47,7 +47,9 @@
 
 <script src="https://yastatic.net/jquery/2.1.4/jquery.min.js"></script>
 <script>window.jQuery || document.write('<script src="/static/vendor/jquery-2.1.4/jquery.min.js"><\/script>');</script>
-<script src="/static/js/lib.min.js?1608211951"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/livestamp/1.1.2/livestamp.min.js"></script>
-<script>window.jQuery().livestamp || document.write('<script src="/static/vendor/livestamp-1.1.2/livestamp.min.js"><\/script>');</script>
-<script src="/static/js/main.min.js?1608211951"></script>
+<script src="/static/js/lib.min.js?1608250301"></script>
+<?php if (!empty($admin)) : ?>
+    <script src="/static/js/admin.min.js?1608250331"></script>
+<?php else : ?>
+    <script src="/static/js/main.min.js?1608250331"></script>
+<?php endif; ?>

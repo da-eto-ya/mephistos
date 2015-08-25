@@ -4,7 +4,7 @@
  */
 
 require_once __DIR__ . '/../require.php';
-require_services('request', 'response', 'template');
+require_services('request', 'response', 'template', 'auth');
 
 /**
  * Главная страница
