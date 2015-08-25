@@ -23,16 +23,21 @@ function controller_admin()
     $success = false;
 
     if (request_is_post()) {
-        $commission = _p('commission', -1, APP_PARAM_INT);
-
-        if (!validate_range($commission, 0, 101)) {
-            $errors[] = 'Комиссия должна быть в процентах от 0 до 100';
+        if (!auth_validate_csrf(_p('_csrf', ''), ['admin'])) {
+            $errors[] = 'Похоже, у вас закончилась сессия';
+            $errors[] = 'Обновите страницу или перелогиньтесь';
         } else {
-            $success = billing_set_commission($commission);
-            $commission = billing_get_commission(true);
+            $commission = _p('commission', -1, APP_PARAM_INT);
 
-            if (!$success) {
-                $errors[] = 'Не удалось обновить данные. Попробуйте позже';
+            if (!validate_range($commission, 0, 101)) {
+                $errors[] = 'Комиссия должна быть в процентах от 0 до 100';
+            } else {
+                $success = billing_set_commission($commission);
+                $commission = billing_get_commission(true);
+
+                if (!$success) {
+                    $errors[] = 'Не удалось обновить данные. Попробуйте позже';
+                }
             }
         }
     }
