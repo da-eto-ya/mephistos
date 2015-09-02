@@ -16,8 +16,9 @@ require_repos('users');
 function auth_config(array $config = null)
 {
     static $_config = [
-        // TODO: возможно, стоит перенести secret_key в конфиг безопасности
-        'secret_key' => 'oh my secret key...',
+        // TODO: возможно, стоит перенести auth_key/csrf_key в конфиг безопасности
+        'auth_key' => 'oh, my secret key...',
+        'csrf_key' => 'oh, my poor csrf key!..',
         'token_algo' => 'HS256',
         'cookie' => 'auth',
         'domain' => null,
@@ -25,7 +26,7 @@ function auth_config(array $config = null)
     ];
 
     if (null !== $config) {
-        foreach (['secret_key', 'cookie', 'domain'] as $key) {
+        foreach (['auth_key', 'csrf_key', 'cookie', 'domain'] as $key) {
             if (isset($config[$key]) && !empty((string) $config[$key])) {
                 $_config[$key] = (string) $config[$key];
             }
@@ -99,7 +100,7 @@ function auth_generate_session_token($uid, array $data = [])
     // для jti совершенно не обязательно использовать криптостойкий алгоритм.
     // это просто id сессии. достаточно того, чтобы была крайне малая вероятность
     // случайного совпадения значений, отвечающих за различные сессии.
-    $jti = md5(join(':', [$uid, time(), mt_rand(), $config['secret_key']]));
+    $jti = md5(join(':', [$uid, microtime(), mt_rand()]));
 
     $payload = array_merge($data, [
         'sub' => $uid,
@@ -110,7 +111,7 @@ function auth_generate_session_token($uid, array $data = [])
         'purpose' => 'session',
     ]);
 
-    $tokenResult = jwt_encode($payload, $config['secret_key'], $config['token_algo']);
+    $tokenResult = jwt_encode($payload, $config['auth_key'], $config['token_algo']);
 
     if (!$tokenResult['success']) {
         return false;
@@ -188,7 +189,7 @@ function auth_get_session_data($force = false)
             return false;
         }
 
-        $payloadResult = jwt_decode($token, $config['secret_key'], [$config['token_algo']]);
+        $payloadResult = jwt_decode($token, $config['auth_key'], [$config['token_algo']]);
 
         if (!$payloadResult['success']) {
             $_payload = false;
@@ -292,7 +293,7 @@ function auth_get_csrf(array $params = [], $sessionData = null)
     $action = join(':', $params);
 
     if (!isset($_cache[$action])) {
-        $_cache[$action] = hash_hmac('SHA256', $action, auth_config()['secret_key']);
+        $_cache[$action] = hash_hmac('SHA256', $action, auth_config()['csrf_key']);
     }
 
     return $_cache[$action];

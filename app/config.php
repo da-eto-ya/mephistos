@@ -60,7 +60,14 @@ return [
     // TODO: возможно, стоит перенести часть конфигов auth в security или слить их
     // компонент аутентификации
     'auth' => [
-        'secret_key' => getenv('OPENSHIFT_SECRET_TOKEN') ?: hash('sha256', 'oh my secret key!'),
+        'auth_key' => getenv('OPENSHIFT_SECRET_TOKEN') ?
+            substr(getenv('OPENSHIFT_SECRET_TOKEN'), 0, round(strlen(getenv('OPENSHIFT_SECRET_TOKEN')) / 2)) :
+            hash('sha256', 'oh, my secret key!')
+        ,
+        'csrf_key' => getenv('OPENSHIFT_SECRET_TOKEN') ?
+            substr(getenv('OPENSHIFT_SECRET_TOKEN'), round(strlen(getenv('OPENSHIFT_SECRET_TOKEN')) / 2)) :
+            hash('sha256', 'oh, my csrf key...')
+        ,
         'domain' => getenv('OPENSHIFT_APP_NAME') ? '.mephistos.da-eto.info' : '.mephistos.loc',
         'expire' => 86400, // 1d
     ],
