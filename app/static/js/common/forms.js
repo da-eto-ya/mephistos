@@ -60,7 +60,7 @@ $$ = window.$$ || {};
                 }).data('jqxhr')
                     .done(success)
                     .always(function () {
-                        formHelper.stateNormal(form);
+                        $$.forms.helper.stateNormal(form);
                     });
             }
         };

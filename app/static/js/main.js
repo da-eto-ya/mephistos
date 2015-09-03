@@ -97,7 +97,7 @@
                     }
 
                     if (data.error) {
-                        megaphone.error(data.error);
+                        megaphone.alert(data.error);
                     }
                 };
 
