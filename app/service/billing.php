@@ -118,7 +118,7 @@ function billing_order_execute($id, $executor)
         $executor = repo_users_get_executor_by_id($executor);
     }
 
-    if (!$executor || !isset($executor['id'])) {
+    if (!$executor) {
         return false;
     }
 
@@ -128,9 +128,9 @@ function billing_order_execute($id, $executor)
         return false;
     }
 
-    $executed = repo_orders_execute($order['id'], $executor['id']);
+    $processing = repo_orders_processing($order['id'], $executor['id']);
 
-    if (!$executed) {
+    if (!$processing) {
         return false;
     }
 
@@ -138,31 +138,34 @@ function billing_order_execute($id, $executor)
     $userProfit = $revenues[0];
     $customerProfit = -$order['price'];
 
-    $executorPaid = repo_users_add_balance($executor['id'], $userProfit);
     $customerPaid = repo_users_add_balance($customer['id'], $customerProfit);
+    $executorPaid = repo_users_add_balance($executor['id'], $userProfit);
+    $balanceChanged = $customerPaid && $executorPaid;
     // TODO: по-хорошему, нужно где-то ещё иметь счёт системы, на который класть $systemProfit
 
-    if (!$executorPaid || !$customerPaid) {
+    // ордер принят к исполнению, но возникли ошибки с изменением баланса
+    if (!$balanceChanged) {
+        // TODO: log, revert task
         /*$orderCanceled = */
         repo_orders_cancel($order['id']);
-        // TODO: log if false
-
-        if ($executorPaid) {
-            /*$executorCanceled = */
-            repo_users_sub_balance($executor['id'], $userProfit);
-            // TODO: log if false
-        }
 
         if ($customerPaid) {
+            // TODO: log, revert task
             /*$customerCanceled = */
             repo_users_sub_balance($customer['id'], $customerProfit);
-            // TODO: log if false
         }
 
-        return false;
+        if ($executorPaid) {
+            // TODO: log, revert task
+            /*$executorCanceled = */
+            repo_users_sub_balance($executor['id'], $userProfit);
+        }
+    } else {
+        // TODO: log processing, revert if error
+        repo_orders_finish($order['id']);
     }
 
-    return true;
+    return $processing && $balanceChanged;
 }
 
 /**

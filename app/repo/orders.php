@@ -8,12 +8,24 @@ require_services('db', 'validate', 'billing');
 
 /** Новый заказ */
 const APP_ORDER_STATUS_NEW = 0;
+/** Заказ в процессе исполнения */
+const APP_ORDER_STATUS_PROCESSING = 2;
 /** Исполненный заказ */
 const APP_ORDER_STATUS_EXECUTED = 1;
+/**
+ * Все возможные статусы заказов
+ */
+const APP_ORDER_ALL_STATUSES = [
+    APP_ORDER_STATUS_NEW,
+    APP_ORDER_STATUS_PROCESSING,
+    APP_ORDER_STATUS_EXECUTED,
+];
+
 /** Максимальная длина комментария */
 const APP_ORDER_COMMENT_MAXLENGTH = 665;
 /** Максимальная сумма заказа */
 const APP_ORDER_MAX_PRICE = 10000;
+
 /**
  * Список заказов с какой-либо даты.
  *
@@ -78,31 +90,43 @@ function repo_orders_create($price, $description, $customerId)
  * @param int $uid id пользователя
  * @return bool|int
  */
-function repo_orders_execute($id, $uid)
+function repo_orders_processing($id, $uid)
 {
-    return repo_orders_change_status($id, APP_ORDER_STATUS_EXECUTED, $uid);
+    return repo_orders_change_status($id, APP_ORDER_STATUS_NEW, APP_ORDER_STATUS_PROCESSING, $uid);
 }
 
 /**
- * Отменить исполнение ранее исполненного заказа.
+ * Завершить исполнение заказа.
+ *
+ * @param int $id заказа
+ * @return bool
+ */
+function repo_orders_finish($id)
+{
+    return repo_orders_change_status($id, APP_ORDER_STATUS_PROCESSING, APP_ORDER_STATUS_EXECUTED, null);
+}
+
+/**
+ * Отменить исполняемый заказ.
  *
  * @param int $id заказа
  * @return bool
  */
 function repo_orders_cancel($id)
 {
-    return repo_orders_change_status($id, APP_ORDER_STATUS_NEW, null);
+    return repo_orders_change_status($id, APP_ORDER_STATUS_PROCESSING, APP_ORDER_STATUS_NEW, null);
 }
 
 /**
  * Изменить статус заказа.
  *
  * @param int      $id id заказа
- * @param int      $status новый статус
+ * @param int      $fromStatus старый статус
+ * @param int      $toStatus новый статус
  * @param int|null $uid id исполнителя
  * @return bool
  */
-function repo_orders_change_status($id, $status, $uid = null)
+function repo_orders_change_status($id, $fromStatus, $toStatus, $uid = null)
 {
     $id = (int) $id;
 
@@ -110,28 +134,24 @@ function repo_orders_change_status($id, $status, $uid = null)
         return false;
     }
 
-    if (APP_ORDER_STATUS_NEW == $status) {
-        $oldStatus = APP_ORDER_STATUS_EXECUTED;
-    } else if (APP_ORDER_STATUS_EXECUTED == $status) {
-        $oldStatus = APP_ORDER_STATUS_NEW;
-    } else {
+    if (!in_array($fromStatus, APP_ORDER_ALL_STATUSES, true) ||
+        !in_array($toStatus, APP_ORDER_ALL_STATUSES, true)
+    ) {
         return false;
     }
 
-    if (APP_ORDER_STATUS_EXECUTED == $status) {
+    if (null !== $uid) {
         $uid = (int) $uid;
 
         if (!$uid) {
             return false;
         }
-    } else {
-        $uid = null;
     }
 
     $affected = db_exec(
         'orders',
         'UPDATE `orders` SET `status` = ?, `executor_id` = ? WHERE `id` = ? AND `status` = ? LIMIT 1',
-        [$status, $uid, $id, $oldStatus]
+        [$toStatus, $uid, $id, $fromStatus]
     );
 
     return (1 === $affected);
@@ -288,7 +308,7 @@ function repo_orders_validate_fields(array $fields)
         ],
         'status' => [
             ['is_int'],
-            ['in_array', 'params' => [[APP_ORDER_STATUS_NEW, APP_ORDER_STATUS_EXECUTED]]],
+            ['in_array', 'params' => [APP_ORDER_ALL_STATUSES]],
         ],
         'created' => [
             ['db_datetime'],
